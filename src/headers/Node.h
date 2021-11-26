@@ -5,17 +5,18 @@ enum Types{
     Nothing = 0,
     Op = 1,
     Var = 2,
-    Const = 3
+    Const_or_num = 3
 };
 
 enum Priorities{//в дереве при обходе вглубину должны убывать приоритеты, иначе скобки
 
     nothing = 0,
     unary_op = 1,
-    const_or_num = 2,
-    mul_or_div = 3,
-    sub = 4,
-    sum = 5
+    power = 2,      //вроде так
+    const_or_num = 3,
+    mul_or_div = 4,
+    sub = 5,
+    sum = 6
 };
 
 typedef int NodeType;
@@ -31,10 +32,12 @@ class Node{
     Node* right = nullptr;
     
     Node* copy_tree(Node* cur_root);
+    void print_node_graphviz(Node* cur_node, FILE* graphviz_file);
 public:
 
     Node() = default;
-    Node(NodeType new_type, NodeData data, Node* prev_node);
+    Node(NodeType new_type, NodeData new_data, Node* prev_node);
+    Node(Node* new_left, NodeData new_data, Node* new_right);
     Node(const Node& old_node);
     Node(Node&& rv_node);
     ~Node();
@@ -49,6 +52,9 @@ public:
     Node* get_prev();
     bool is_leaf();
     void add_branches(Node* new_left, Node* new_right);
+    void change_data(NodeData new_data);
     void unlink_left();
     void unlink_right();
+    bool check_tree();
+    void dump_graphviz(FILE* graph_file);  
 };

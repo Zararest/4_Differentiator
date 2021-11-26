@@ -6,6 +6,8 @@ class Differ{
 
     Node* root = nullptr;
 
+    Node* get_tree(FILE* file);
+    bool check_tree();
 public:
 
     Differ(FILE* file);
