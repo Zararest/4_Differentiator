@@ -1,5 +1,7 @@
 #define DATA_SIZE 8
 
+#include <stdio.h>
+
 enum Types{
 
     Nothing = 0,

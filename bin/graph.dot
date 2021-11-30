@@ -1,0 +1,17 @@
+digraph Dump{
+node[color=red,fontsize=14, style=filled]
+null[fillcolor=red]
+[fillcolor=lightgrey]
+"(null)" -> "+"
+"+"[fillcolor=red]
+[fillcolor=green]
+"+" -> "3"
+"3"[fillcolor=red]
+[fillcolor=blue]
+"+" -> "2"
+"2"[fillcolor=red]
+[fillcolor=blue]
+"(null)" -> "-(3"
+"-(3"[fillcolor=red]
+[fillcolor=blue]
+}

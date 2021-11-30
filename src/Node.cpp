@@ -70,7 +70,7 @@ Node::Node(NodeType new_type, NodeData new_data, Node* prev_node){
 
     type = new_type;
     data = new char[DATA_SIZE];
-    assert(data != nullptr);
+    assert(new_data != nullptr);
     memcpy(data, new_data, DATA_SIZE);
     prev = prev_node;
 }
@@ -125,6 +125,17 @@ Node::Node(Node* new_left, NodeData new_data, Node* new_right){
 
     if (new_left != nullptr){ new_left->prev = this; }
     if (new_right != nullptr){ new_right->prev = this; }
+
+    if (new_data != nullptr){
+
+        data = new char[DATA_SIZE];
+        assert(data != nullptr);
+        memcpy(data, new_data, DATA_SIZE);  
+    } else{
+
+        data = nullptr;
+    }
+    
 }
 
 Node* Node::copy_tree(Node* cur_root){
@@ -287,26 +298,6 @@ void Node::unlink_right(){
     }
 }
 
-void Node::print_node_graphviz(Node* cur_node, FILE* outp_file){
-
-
-    fprintf(outp_file, "%s[fillcolor=""red""]\n", cur_node->data);
-    choose_color(outp_file, cur_node->type);
-
-    if (cur_node->left != nullptr){
-
-        fprintf(outp_file, "%s -> %s\n", cur_node->data, cur_node->left->data);
-        print_node_graphviz(cur_node->left, outp_file);
-    }
-
-    if (cur_node->right != nullptr){
-
-        fprintf(outp_file, "%s -> %s\n", cur_node->data, cur_node->right->data);
-        print_node_graphviz(cur_node->right, outp_file);
-    }
-    
-}
-
 void choose_color(FILE* outp_file, NodeType node_type){
 
     switch (node_type){
@@ -329,23 +320,40 @@ void choose_color(FILE* outp_file, NodeType node_type){
     }
 }
 
+void Node::print_node_graphviz(Node* cur_node, FILE* outp_file){
+
+    if (cur_node->data != nullptr){
+
+        fprintf(outp_file, "\"%s\"[fillcolor=""red""]\n", cur_node->data);
+    } else{
+
+        fprintf(outp_file, "null[fillcolor=""red""]\n");   
+    }
+
+    choose_color(outp_file, cur_node->type);
+
+    if (cur_node->left != nullptr){
+
+        fprintf(outp_file, "\"%s\" -> \"%s\"\n", cur_node->data, cur_node->left->data);
+        print_node_graphviz(cur_node->left, outp_file);
+    }
+
+    if (cur_node->right != nullptr){
+
+        fprintf(outp_file, "\"%s\" -> \"%s\"\n", cur_node->data, cur_node->right->data);
+        print_node_graphviz(cur_node->right, outp_file);
+    }
+    
+}
+
 void Node::dump_graphviz(FILE* outp_file){
 
     assert(outp_file != nullptr);
 
     fprintf(outp_file, "digraph Dump{\n");
-    
     fprintf(outp_file, "node[color=""red"",fontsize=14, style=""filled""]\n");
-    fprintf(outp_file, "%s", data);
-    choose_color(outp_file, type);
+    
+    print_node_graphviz(this, outp_file);
 
-    if (left != nullptr){
-        fprintf(outp_file, "%s -> %s\n", data, left->data);
-        print_node_graphviz(left, outp_file);
-    }
-    if (right != nullptr){
-        fprintf(outp_file, "%s -> %s\n", data, left->data);
-        print_node_graphviz(right, outp_file);
-    }
     fprintf(outp_file, "}\n");
 }
