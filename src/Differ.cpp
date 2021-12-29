@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <assert.h> 
 
+/*
 char check_spaces(FILE* file){
 
     char symbol = '\0';
@@ -16,21 +17,19 @@ char check_spaces(FILE* file){
     }
 
     return symbol;
-}
+}*/
 
 NodeData get_op(FILE* file, NodeData op){
 
-    char symbol = check_spaces(file);
+    char symbol = fgetc(file);
 
     if (symbol == ')'){
 
-        //printf("There is no operator\n");
-        //exit(0);
         return nullptr;
     }    
 
     op[DATA_SIZE] = '\0';
-    int operator_size = 1;
+    int operator_size = 0;
 
     while (symbol != '('){
 
@@ -48,13 +47,13 @@ NodeData get_op(FILE* file, NodeData op){
 
         if (symbol != ' '){
 
-            op[operator_size - 1] = symbol;
+            op[operator_size] = symbol;
             operator_size++;
         }
         
         symbol = fgetc(file);
     }
-    op[operator_size - 1] = '\0';
+    op[operator_size] = '\0';
 
     if (symbol != '('){
 
@@ -67,17 +66,19 @@ NodeData get_op(FILE* file, NodeData op){
 
 Node* Differ::get_tree(FILE* file){
 
-    char symbol = check_spaces(file);
+    char symbol = fgetc(file);
     char op[DATA_SIZE];
 
     if (symbol == '('){ 
 
-        return new Node(get_tree(file), get_op(file, op), get_tree(file));
+        Node* new_tree = new Node(get_tree(file), get_op(file, op), get_tree(file));
+        fgetc(file);
+        return new_tree;
     }
 
     char lexem[DATA_SIZE + 1];
     lexem[DATA_SIZE] = '\0';
-    int lexem_size = 1;
+    int lexem_size = 0;
 
     while (symbol != ')'){
 
@@ -95,22 +96,21 @@ Node* Differ::get_tree(FILE* file){
         
         if (symbol != ' '){
 
-            lexem[lexem_size - 1] = symbol;
+            lexem[lexem_size] = symbol;
             lexem_size++;
         }
 
         symbol = fgetc(file);
     }
 
-    if (lexem_size > 1){
+    if (lexem_size > 0){
 
-        lexem[lexem_size - 1] = '\0';
+        lexem[lexem_size] = '\0';
         return new Node(nullptr, lexem, nullptr);
     } else{
 
         return new Node(nullptr, nullptr, nullptr);
     }
-    
 }
 
 
@@ -118,9 +118,6 @@ Differ::Differ(FILE* file){
     
     char op[DATA_SIZE];
     root = get_tree(file);
-    //Node* left_brunch = get_tree(file);
-    //root->change_data(get_op(file, op));
-    //Node* right_brunch = get_tree(file);
 }
 
 Differ::~Differ(){

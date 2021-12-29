@@ -38,7 +38,7 @@ class Node{
 public:
 
     Node() = default;
-    Node(NodeType new_type, NodeData new_data, Node* prev_node);
+    //Node(NodeType new_type, NodeData new_data, Node* prev_node);
     Node(Node* new_left, NodeData new_data, Node* new_right);
     Node(const Node& old_node);
     Node(Node&& rv_node);

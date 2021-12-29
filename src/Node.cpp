@@ -54,7 +54,7 @@ bool is_number(NodeData lexem){
     return false;
 }
 
-bool is_var(NodeData lexem){
+bool is_var(NodeData lexem){ //надо поправить
 
     if ((strlen(lexem) == 1)
         && ((lexem[0] < '0')
@@ -65,7 +65,7 @@ bool is_var(NodeData lexem){
 
     return false;
 }
-
+/*
 Node::Node(NodeType new_type, NodeData new_data, Node* prev_node){
 
     type = new_type;
@@ -73,7 +73,7 @@ Node::Node(NodeType new_type, NodeData new_data, Node* prev_node){
     assert(new_data != nullptr);
     memcpy(data, new_data, DATA_SIZE);
     prev = prev_node;
-}
+}*/
 
 bool Node::check_tree(){
 
@@ -150,9 +150,16 @@ Node* Node::copy_tree(Node* cur_root){
         new_root->add_branches(new_left, new_right);
 
         new_root->type = cur_root->type;
-        new_root->data = new char[DATA_SIZE];
-        memcpy(new_root->data, cur_root->data, DATA_SIZE);
-    
+
+        if (cur_root->data != nullptr){
+
+            new_root->data = new char[DATA_SIZE];
+            memcpy(new_root->data, cur_root->data, DATA_SIZE);
+        } else{
+
+            new_root->data = nullptr;
+        }
+
         return new_root;
     } else{
 
@@ -168,7 +175,15 @@ Node::Node(const Node& old_node){
     add_branches(new_left, new_right);
 
     type = old_node.type;
-    memcpy(data, old_node.data, DATA_SIZE);
+
+    if (old_node.data != nullptr){
+
+        memcpy(data, old_node.data, DATA_SIZE);
+    } else{
+
+        delete data;
+        data = nullptr;
+    }   
 }
 
 Node::Node(Node&& rv_node){
@@ -303,19 +318,19 @@ void choose_color(FILE* outp_file, NodeType node_type){
     switch (node_type){
 
         case Nothing:
-            fprintf(outp_file, "[fillcolor=""lightgrey""]\n");
+            fprintf(outp_file, "fillcolor=""lightgrey""]\n");
             break;
         
         case Op:
-            fprintf(outp_file, "[fillcolor=""green""]\n");
+            fprintf(outp_file, "fillcolor=""green""]\n");
             break;
         
         case Var:
-            fprintf(outp_file, "[fillcolor=""yellow""]\n");
+            fprintf(outp_file, "fillcolor=""yellow""]\n");
             break;
         
         case Const_or_num:
-            fprintf(outp_file, "[fillcolor=""blue""]\n");
+            fprintf(outp_file, "fillcolor=""blue""]\n");
             break;
     }
 }
@@ -324,23 +339,23 @@ void Node::print_node_graphviz(Node* cur_node, FILE* outp_file){
 
     if (cur_node->data != nullptr){
 
-        fprintf(outp_file, "\"%s\"[fillcolor=""red""]\n", cur_node->data);
+        fprintf(outp_file, "\"%p\" [label= \"%s\" ", cur_node, cur_node->data);
     } else{
 
-        fprintf(outp_file, "null[fillcolor=""red""]\n");   
+        fprintf(outp_file, "\"%p\" [label= \"null\"", cur_node);   
     }
 
     choose_color(outp_file, cur_node->type);
 
     if (cur_node->left != nullptr){
 
-        fprintf(outp_file, "\"%s\" -> \"%s\"\n", cur_node->data, cur_node->left->data);
+        fprintf(outp_file, "\"%p\" -> \"%p\"\n", cur_node, cur_node->left);
         print_node_graphviz(cur_node->left, outp_file);
     }
 
     if (cur_node->right != nullptr){
 
-        fprintf(outp_file, "\"%s\" -> \"%s\"\n", cur_node->data, cur_node->right->data);
+        fprintf(outp_file, "\"%p\" -> \"%p\"\n", cur_node, cur_node->right);
         print_node_graphviz(cur_node->right, outp_file);
     }
     
