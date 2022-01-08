@@ -8,9 +8,16 @@
 
 #define MAX_FILE_SIZE 200
 
-bool find_in_unary_op(NodeData lexem){
+/**
+ * @brief Определяет является ли строка унарным оператором.
+ * 
+ * @param lexem 
+ * @return true 
+ * @return false 
+ */
+bool find_in_unary_op(const NodeData lexem){
 
-    char buffer[MAX_FILE_SIZE];
+    char buffer[MAX_FILE_SIZE] = "";
     FILE* file = fopen("../bin/unary_operators.bin", "r");
     assert(file != nullptr);
     assert(fread(buffer, 1, MAX_FILE_SIZE, file) < MAX_FILE_SIZE);
@@ -20,9 +27,16 @@ bool find_in_unary_op(NodeData lexem){
     return false;
 }
 
-bool find_in_binary_op(NodeData lexem){
+/**
+ * @brief Определяет является ли строка бинарным опреатором.
+ * 
+ * @param lexem 
+ * @return true 
+ * @return false 
+ */
+bool find_in_binary_op(const NodeData lexem){
 
-    char buffer[MAX_FILE_SIZE];
+    char buffer[MAX_FILE_SIZE] = "";
     FILE* file = fopen("../bin/binary_operators.bin", "r");
     assert(file != nullptr);
     assert(fread(buffer, 1, MAX_FILE_SIZE, file) < MAX_FILE_SIZE);
@@ -32,9 +46,16 @@ bool find_in_binary_op(NodeData lexem){
     return false;
 }
 
-bool find_in_consts(NodeData lexem){
+/**
+ * @brief Определяет является ли строка константой.
+ * 
+ * @param lexem 
+ * @return true 
+ * @return false 
+ */
+bool find_in_consts(const NodeData lexem){
 
-    char buffer[MAX_FILE_SIZE];
+    char buffer[MAX_FILE_SIZE] = "";
     FILE* file = fopen("../bin/consts.bin", "r");
     assert(file != nullptr);
     assert(fread(buffer, 1, MAX_FILE_SIZE, file) < MAX_FILE_SIZE);
@@ -44,7 +65,14 @@ bool find_in_consts(NodeData lexem){
     return false;
 }   
 
-bool is_number(NodeData lexem){
+/**
+ * @brief Определяет является ли строка числом.
+ * 
+ * @param lexem 
+ * @return true 
+ * @return false 
+ */
+bool is_number(const NodeData lexem){
 
     char* endptr = nullptr;
     strtod(lexem, &endptr);
@@ -54,28 +82,39 @@ bool is_number(NodeData lexem){
     return false;
 }
 
-bool is_var(NodeData lexem){ //надо поправить
+/**
+ * @brief Определяет является ли строка переменной. Переменная - любая последовательность строчных букв, которая не является константой или оператором.
+ * 
+ * @param lexem 
+ * @return true 
+ * @return false 
+ */
+bool is_var(const NodeData lexem){
 
-    if ((strlen(lexem) == 1)
-        && ((lexem[0] < '0')
-            || (lexem[0] > '9')))
-    {
-        return true;
+    if (find_in_unary_op(lexem) || find_in_consts(lexem)){
+        return false;
     }
 
-    return false;
+    for (int i = 0; i < strlen(lexem); i++){
+
+        if ((lexem[i] < 'a') || (lexem[i] > 'z')){ 
+
+            return false; 
+        }
+    }
+
+    return true;
 }
-/*
-Node::Node(NodeType new_type, NodeData new_data, Node* prev_node){
 
-    type = new_type;
-    data = new char[DATA_SIZE];
-    assert(new_data != nullptr);
-    memcpy(data, new_data, DATA_SIZE);
-    prev = prev_node;
-}*/
-
+/**
+ * @brief Проверка связности дерева.
+ * 
+ * @return true 
+ * @return false 
+ */
 bool Node::check_tree(){
+
+    if (this == nullptr){ return false; }
 
     if (left != nullptr){ 
 
@@ -100,6 +139,12 @@ bool Node::check_tree(){
     return true;
 }
 
+/**
+ * @brief Определение типа узла по его data.
+ * 
+ * @param node_data 
+ * @return NodeType 
+ */
 NodeType define_type(NodeData node_data){
 
     if (node_data == nullptr){ return Nothing; }
@@ -110,9 +155,35 @@ NodeType define_type(NodeData node_data){
     return -1;
 }
 
-Node::Node(Node* new_left, NodeData new_data, Node* new_right){
+/**
+ * @brief Определение типа узла по его data.
+ * 
+ * @param node_data 
+ * @return int 
+ */
+int define_priority(NodeData node_data){
 
+    if (node_data == nullptr){ return nothing; }
+    if (find_in_unary_op(node_data)){ return unary_op; }
+    if (strcmp(node_data, "^") == 0){ return power; } 
+    if ((strcmp(node_data, "*") == 0) || (strcmp(node_data, "/") == 0)){ return mul_or_div; }
+    if (strcmp(node_data, "-") == 0){ return sub; }
+    if (strcmp(node_data, "+") == 0){ return sum; }
+
+    return const_or_num;
+}
+
+/**
+ * @brief Создание узла дерева по его данным и двум потомкам. Производится связывание детей с родителем без доп проверок.
+ * 
+ * @param new_left 
+ * @param new_data 
+ * @param new_right 
+ */
+Node::Node(Node* new_left, NodeData new_data, Node* new_right){
+    
     type = define_type(new_data);
+    priority = define_priority(new_data);
 
     if (type == -1){
 
@@ -138,6 +209,12 @@ Node::Node(Node* new_left, NodeData new_data, Node* new_right){
     
 }
 
+/**
+ * @brief Полное рекурсирвное копирование поддерева.
+ * 
+ * @param cur_root 
+ * @return Node* 
+ */
 Node* Node::copy_tree(Node* cur_root){
 
     if (cur_root != nullptr){
@@ -150,6 +227,7 @@ Node* Node::copy_tree(Node* cur_root){
         new_root->add_branches(new_left, new_right);
 
         new_root->type = cur_root->type;
+        new_root->priority = cur_root->priority;
 
         if (cur_root->data != nullptr){
 
@@ -167,6 +245,11 @@ Node* Node::copy_tree(Node* cur_root){
     }
 }
 
+/**
+ * @brief Конструктор копирования на основе функции copy_tree.
+ * 
+ * @param old_node 
+ */
 Node::Node(const Node& old_node){
 
     Node* new_left = copy_tree(old_node.left);
@@ -175,6 +258,7 @@ Node::Node(const Node& old_node){
     add_branches(new_left, new_right);
 
     type = old_node.type;
+    priority = old_node.priority;
 
     if (old_node.data != nullptr){
 
@@ -186,6 +270,11 @@ Node::Node(const Node& old_node){
     }   
 }
 
+/**
+ * @brief Перемещающий конструктор.
+ * 
+ * @param rv_node 
+ */
 Node::Node(Node&& rv_node){
 
     std::swap(data, rv_node.data);
@@ -193,8 +282,13 @@ Node::Node(Node&& rv_node){
     std::swap(right, rv_node.right);
 
     type = rv_node.type;
+    priority = rv_node.priority;
 }
 
+/**
+ * @brief Деструктор.
+ * 
+ */
 Node::~Node(){
 
     delete left;
@@ -203,6 +297,12 @@ Node::~Node(){
     delete[] data;
 }
 
+/**
+ * @brief Копирующий оператор присваивания на основе copy_tree.
+ * 
+ * @param old_node 
+ * @return Node& 
+ */
 Node& Node::operator =(const Node& old_node){
 
     if (this == &old_node){ return *this; }
@@ -213,11 +313,18 @@ Node& Node::operator =(const Node& old_node){
     add_branches(new_left, new_right);
 
     type = old_node.type;
+    priority = old_node.priority;
     memcpy(data, old_node.data, DATA_SIZE);
 
     return *this;
 }
 
+/**
+ * @brief Перемещающий оператор присваивания.
+ * 
+ * @param rv_node 
+ * @return Node& 
+ */
 Node& Node::operator =(Node&& rv_node){
 
     if (this == &rv_node){ return *this; }
@@ -227,42 +334,67 @@ Node& Node::operator =(Node&& rv_node){
     std::swap(right, rv_node.right);
 
     type = rv_node.type;
+    priority = rv_node.priority;
 
     return *this;
 }
 
+/**
+ * @brief Возврат типа узла.
+ * 
+ * @return NodeType 
+ */
 NodeType Node::get_type(){
 
     return type;
 }
 
+/**
+ * @brief Возврат приоритета узла.
+ * 
+ * @return int 
+ */
 int Node::get_priority(){
 
-    if (data == nullptr){ return nothing; }
-    if (find_in_unary_op(data)){ return unary_op; }
-    if (strcmp(data, "^") == 0){ return power; } 
-    if ((strcmp(data, "*") == 0) || (strcmp(data, "/") == 0)){ return mul_or_div; }
-    if (strcmp(data, "-") == 0){ return sub; }
-    if (strcmp(data, "+") == 0){ return sum; }
-
-    return const_or_num;
+    return priority;
 }
 
+/**
+ * @brief Получить левый узел.
+ * 
+ * @return Node* 
+ */
 Node* Node::get_left(){
 
     return left;
 }
 
+/**
+ * @brief Получить правый узел.
+ * 
+ * @return Node* 
+ */
 Node* Node::get_right(){
 
     return right;
 }
 
+/**
+ * @brief Получить прошлый узел.
+ * 
+ * @return Node* 
+ */
 Node* Node::get_prev(){
 
     return prev;
 }
 
+/**
+ * @brief Является ли узел листом.
+ * 
+ * @return true 
+ * @return false 
+ */
 bool Node::is_leaf(){
 
     assert(((right != nullptr) && (left != nullptr)) 
@@ -273,6 +405,12 @@ bool Node::is_leaf(){
     return false;
 }
 
+/**
+ * @brief Добавление новых потомков и удаление старых. Потомки связываются с родителем без дополнительных проверок.
+ * 
+ * @param new_left 
+ * @param new_right 
+ */
 void Node::add_branches(Node* new_left, Node* new_right){
     
     delete left;
@@ -285,6 +423,11 @@ void Node::add_branches(Node* new_left, Node* new_right){
     if (new_right != nullptr){ new_right->prev = this; }
 }
 
+/**
+ * @brief Изменение данных с изменением типа и приоритета.
+ * 
+ * @param new_data 
+ */
 void Node::change_data(NodeData new_data){
 
     delete data;
@@ -293,8 +436,13 @@ void Node::change_data(NodeData new_data){
     memcpy(data, new_data, strlen(new_data));
 
     type = define_type(new_data);
+    priority = define_priority(new_data);
 }
 
+/**
+ * @brief Разрыв родителя с левым потомком.
+ * 
+ */
 void Node::unlink_left(){
 
     if (left != nullptr){
@@ -304,6 +452,10 @@ void Node::unlink_left(){
     }
 }
 
+/**
+ * @brief Разрыв родителя с правым потомком.
+ * 
+ */
 void Node::unlink_right(){
 
     if (right != nullptr){
@@ -313,6 +465,12 @@ void Node::unlink_right(){
     }
 }
 
+/**
+ * @brief Выбор цвета для узла Graphviz.
+ * 
+ * @param outp_file 
+ * @param node_type 
+ */
 void choose_color(FILE* outp_file, NodeType node_type){
 
     switch (node_type){
@@ -335,6 +493,12 @@ void choose_color(FILE* outp_file, NodeType node_type){
     }
 }
 
+/**
+ * @brief Рекурсивный вывод дерева через Graphviz.
+ * 
+ * @param cur_node 
+ * @param outp_file 
+ */
 void Node::print_node_graphviz(Node* cur_node, FILE* outp_file){
 
     if (cur_node->data != nullptr){
@@ -361,6 +525,11 @@ void Node::print_node_graphviz(Node* cur_node, FILE* outp_file){
     
 }
 
+/**
+ * @brief Вывод дерева.
+ * 
+ * @param outp_file 
+ */
 void Node::dump_graphviz(FILE* outp_file){
 
     assert(outp_file != nullptr);

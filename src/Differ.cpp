@@ -1,127 +1,258 @@
 #include "headers/Differ.h"
+#include "headers/DSL.h"
 
 #include <stdlib.h>
 #include <assert.h> 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
-/*
-char check_spaces(FILE* file){
+#define MAX_OP_SIZE 2
+#define MAX_UNARY_OP_SIZE 8
+#define MAX_VAR_SIZE 8
+#define MAX_NUM_SIZE 16
+#define MAX_CONST_SIZE 4
 
-    char symbol = '\0';
-    while ((symbol = fgetc(file)) == ' '){
+Node* Differ::get_root_expr(){
 
-        if ((symbol == EOF) || (symbol == '\n')){
+    Node* new_root = get_expr();
+    
+    SYNTAX_ERROR(REQUIRE('\n'), PRINT_ERROR_POS; exit(0));
 
-            printf("Incorrect data\n");
-            exit(0);
-        }
-    }
-
-    return symbol;
-}*/
-
-NodeData get_op(FILE* file, NodeData op){
-
-    char symbol = fgetc(file);
-
-    if (symbol == ')'){
-
-        return nullptr;
-    }    
-
-    op[DATA_SIZE] = '\0';
-    int operator_size = 0;
-
-    while (symbol != '('){
-
-        if ((symbol == EOF) || (symbol == '\n')){
-
-            printf("Incorrect data\n");
-            exit(0);
-        }
-
-        if (operator_size > DATA_SIZE){
-
-            printf("Expression is too big: |%s|\n", op);
-            exit(0);
-        }
-
-        if (symbol != ' '){
-
-            op[operator_size] = symbol;
-            operator_size++;
-        }
-        
-        symbol = fgetc(file);
-    }
-    op[operator_size] = '\0';
-
-    if (symbol != '('){
-
-        printf("Incorrect operator: |%s|\n", op);
-        exit(0);
-    } 
-
-    return op;
+    return new_root;
 }
 
-Node* Differ::get_tree(FILE* file){
+Node* Differ::get_expr(){
 
-    char symbol = fgetc(file);
-    char op[DATA_SIZE];
+    Node* fir_arg = get_div_mul();
+    char cur_op[MAX_OP_SIZE] = {'\0'};
 
-    if (symbol == '('){ 
+    while (REQUIRE('+') || REQUIRE('-')){
 
-        Node* new_tree = new Node(get_tree(file), get_op(file, op), get_tree(file));
-        fgetc(file);
-        return new_tree;
+        cur_op[0] = line[cur_pos];
+        cur_pos++;
+        fir_arg = new Node(fir_arg, cur_op, get_div_mul());
     }
 
-    char lexem[DATA_SIZE + 1];
-    lexem[DATA_SIZE] = '\0';
-    int lexem_size = 0;
+    return fir_arg;
+}
 
-    while (symbol != ')'){
+Node* Differ::get_div_mul(){
 
-        if ((symbol == EOF) || (symbol == '\n')){
+    Node* fir_arg = get_pow();
+    char cur_op[MAX_OP_SIZE] = {'\0'};
 
-            printf("Incorrect data\n");
-            exit(0);
+    while (REQUIRE('*') || REQUIRE('/')){
+
+        cur_op[0] = line[cur_pos];
+        cur_pos++;
+        fir_arg = new Node(fir_arg, cur_op, get_pow());
+    }
+
+    return fir_arg;
+}
+
+Node* Differ::get_pow(){
+
+    Node* fir_arg = get_args();
+    char cur_op[MAX_OP_SIZE] = {'\0'};
+
+    if (REQUIRE('^')){ 
+
+        cur_op[0] = '^';
+        cur_pos++;
+        fir_arg = new Node(fir_arg, cur_op, get_args());
+    }
+
+    return fir_arg;
+}
+
+Node* Differ::get_args(){
+
+    Node* fir_arg = nullptr;
+
+    if (REQUIRE('(')){
+
+        cur_pos++;
+        fir_arg = get_expr();
+        SYNTAX_ERROR(REQUIRE(')'), PRINT_ERROR_POS; exit(0));
+        cur_pos++;
+
+        return fir_arg;
+    }
+
+    fir_arg = get_num();
+    IS_REG_EXPR_TRUTHFUL;
+
+    fir_arg = get_const();
+    IS_REG_EXPR_TRUTHFUL;
+
+    fir_arg = get_unary_op();
+    IS_REG_EXPR_TRUTHFUL;
+
+    fir_arg = get_var();
+    return fir_arg;
+}
+
+int copy_word(char* line, char* buf, int max_size){
+
+    int i = 0;
+
+    while ((line[i] >= 'a') && (line[i] <= 'z')){ 
+
+        buf[i] = line[i];
+        i++;
+
+        if (i >= max_size){
+
+            return -1;
         }
+    }
+    buf[i] = '\0';
 
-        if (lexem_size > DATA_SIZE){
+    return i;
+}
 
-            printf("Expression is too big: |%s|\n", lexem);
-            exit(0);
+int copy_num(char* line, char* buf, int max_size){
+
+    int i = 0;
+
+    while (((line[i] >= '0') && (line[i] <= '9')) 
+            || (line[i] == '-') 
+                || (line[i] == '.')){ 
+
+        buf[i] = line[i];
+        i++;
+
+        if (i >= max_size){
+
+            return -1;
         }
+    }
+    buf[i] = '\0';
+
+    return i;
+}
+
+Node* Differ::get_unary_op(){
+
+    Node* fir_arg = nullptr;
+    Node* sec_arg = nullptr;
+    char cur_unary_op[MAX_UNARY_OP_SIZE];
+    int cur_unary_op_size = copy_word(line + cur_pos, cur_unary_op, MAX_UNARY_OP_SIZE);
+
+    if ((cur_unary_op_size > 0) 
+        && (find_in_unary_op(cur_unary_op))){//надо поправить
+
+        cur_pos += cur_unary_op_size;
         
-        if (symbol != ' '){
+        SYNTAX_ERROR(REQUIRE('('), PRINT_ERROR_POS; exit(0));
+        cur_pos++;
+        fir_arg = get_expr();
+        SYNTAX_ERROR(REQUIRE(')'), PRINT_ERROR_POS; exit(0));
+        cur_pos++;
+        sec_arg = new Node(nullptr, nullptr, nullptr);
 
-            lexem[lexem_size] = symbol;
-            lexem_size++;
-        }
-
-        symbol = fgetc(file);
+        fir_arg = new Node(sec_arg, cur_unary_op, fir_arg);
+    
+        return fir_arg;
+    } else{
+        
+        error_has_occured = true;
+        return nullptr;
     }
+}
 
-    if (lexem_size > 0){
+Node* Differ::get_var(){
 
-        lexem[lexem_size] = '\0';
-        return new Node(nullptr, lexem, nullptr);
+    Node* fir_arg = nullptr;
+    char cur_var[MAX_VAR_SIZE];
+    int cur_var_size = copy_word(line + cur_pos, cur_var, MAX_VAR_SIZE);
+
+    if ((cur_var_size > 0) 
+        && (!find_in_consts(cur_var)) 
+            && (!find_in_unary_op(cur_var)) 
+                && (is_var(cur_var))){
+        
+        cur_pos += cur_var_size;
+        fir_arg = new Node(nullptr, cur_var, nullptr);
+
+        return fir_arg; 
     } else{
 
-        return new Node(nullptr, nullptr, nullptr);
+        error_has_occured = true;
+        return nullptr;
     }
 }
 
+Node* Differ::get_num(){
+
+    Node* fir_arg = nullptr;
+    char cur_num[MAX_NUM_SIZE];
+    int cur_num_size = copy_num(line + cur_pos, cur_num, MAX_NUM_SIZE);
+
+    if ((cur_num_size > 0) 
+        && (is_number(cur_num))){ 
+
+        cur_pos += cur_num_size;
+        fir_arg = new Node(nullptr, cur_num, nullptr);
+
+        return fir_arg;
+    } else{
+
+        error_has_occured = true;
+        return nullptr;
+    }
+}
+
+Node* Differ::get_const(){
+
+    Node* fir_arg = nullptr;
+    char cur_const[MAX_CONST_SIZE];
+    int cur_const_size = copy_word(line + cur_pos, cur_const, MAX_CONST_SIZE);
+
+    if ((cur_const_size > 0) 
+        && (!find_in_unary_op(cur_const))){ 
+        
+        cur_pos += cur_const_size;
+        fir_arg = new Node(nullptr, cur_const, nullptr);
+
+        return fir_arg;
+    } else{
+
+        error_has_occured = true;
+        return nullptr;
+    }
+}
 
 Differ::Differ(FILE* file){
     
-    char op[DATA_SIZE];
-    root = get_tree(file);
+    struct stat info;
+    
+    if (file == nullptr){ 
+
+        printf("Can't open file\n");
+        exit(0);
+    }
+    
+    fstat(fileno(file), &info);    
+
+    line = new char[info.st_size];
+    
+    if (line == nullptr){
+
+        printf("Can't read data from file\n");
+        exit(0);
+    }
+
+    fread(line, info.st_size, sizeof(char), file);
+
+    root = get_root_expr();
 }
 
 Differ::~Differ(){
 
+    delete line;
     delete root;
 }
 
