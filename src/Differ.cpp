@@ -212,7 +212,8 @@ Node* Differ::get_const(){
     int cur_const_size = copy_word(line + cur_pos, cur_const, MAX_CONST_SIZE);
 
     if ((cur_const_size > 0) 
-        && (!find_in_unary_op(cur_const))){ 
+        && (!find_in_unary_op(cur_const))
+            && (find_in_consts(cur_const))){ 
         
         cur_pos += cur_const_size;
         fir_arg = new Node(nullptr, cur_const, nullptr);
@@ -234,7 +235,7 @@ Differ::Differ(FILE* file){
         printf("Can't open file\n");
         exit(0);
     }
-    
+
     fstat(fileno(file), &info);    
 
     line = new char[info.st_size];
@@ -245,7 +246,7 @@ Differ::Differ(FILE* file){
         exit(0);
     }
 
-    fread(line, info.st_size, sizeof(char), file);
+    fread(line, sizeof(char), info.st_size, file);
 
     root = get_root_expr();
 }
@@ -262,4 +263,65 @@ void Differ::dump_graphiz(FILE* graph_file){
     assert(root->check_tree());
 
     root->dump_graphviz(graph_file);
+}
+
+void Differ::differentiate(){
+
+    diff_node(root);
+    //optimize();
+}
+
+void Differ::diff_unary_op(Node* cur_node){
+
+}
+
+void Differ::diff_node(Node* cur_node){
+
+    if (cur_node == nullptr){ return; }
+
+    Node* tmp_left = nullptr;
+    Node* tmp_right = nullptr;
+    Node* tmp_diff = nullptr;
+    Node* tmp_root = nullptr;
+
+    switch (cur_node->get_priority()){ //надо подумать что делать с разными переменными
+
+        case unary_op:
+            diff_unary_op(cur_node);
+            break;
+
+        case power:
+            DIFF_POWER;
+            break;
+
+        case const_or_var:
+
+            if (cur_node->is_variable()){ 
+
+                DIFF_VAR;
+            } else{
+
+                DIFF_CONST;
+            }
+            break;
+
+        case mul_or_div:
+
+            if (*cur_node == Node(nullptr, "*", nullptr)){
+
+                DIFF_MUL;
+            } else{
+
+                DIFF_DIV;
+            }
+            break;   
+
+        case sub:
+            DIFF_SUB;
+            break;
+
+        case sum:
+            DIFF_SUM;
+            break;
+    }
 }

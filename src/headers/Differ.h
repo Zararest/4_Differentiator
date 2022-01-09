@@ -26,6 +26,8 @@ class Differ{
     Node* get_const();
 
     bool check_tree();
+    void diff_node(Node* cur_node);
+    void diff_unary_op(Node* cur_node);
 public:
 
     Differ(FILE* file);
@@ -39,6 +41,6 @@ public:
     void dump_graphiz(FILE* graph_file);
     void dump_latex(FILE* latex_file);
 
-    Node* differentiate();
-    Node* optimize();
+    void differentiate();
+    void optimize();
 };

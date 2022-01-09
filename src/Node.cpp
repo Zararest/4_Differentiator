@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <assert.h>
 #include <algorithm>
+#include <errno.h>
 
 #define MAX_FILE_SIZE 200
 
@@ -75,9 +76,11 @@ bool find_in_consts(const NodeData lexem){
 bool is_number(const NodeData lexem){
 
     char* endptr = nullptr;
-    strtod(lexem, &endptr);
+    double ret = strtod(lexem, &endptr);
+    int err = errno;
 
-    if (endptr != nullptr){ return true; }
+    if ((ret == 0) && (*endptr == '\0')){ return true; }
+    if (ret != 0){ return true; }
 
     return false;
 }
@@ -170,7 +173,7 @@ int define_priority(NodeData node_data){
     if (strcmp(node_data, "-") == 0){ return sub; }
     if (strcmp(node_data, "+") == 0){ return sum; }
 
-    return const_or_num;
+    return const_or_var;
 }
 
 /**
@@ -199,9 +202,9 @@ Node::Node(Node* new_left, NodeData new_data, Node* new_right){
 
     if (new_data != nullptr){
 
-        data = new char[DATA_SIZE];
+        data = new char[MAX_DATA_SIZE];
         assert(data != nullptr);
-        memcpy(data, new_data, DATA_SIZE);  
+        memcpy(data, new_data, MAX_DATA_SIZE);  
     } else{
 
         data = nullptr;
@@ -215,7 +218,7 @@ Node::Node(Node* new_left, NodeData new_data, Node* new_right){
  * @param cur_root 
  * @return Node* 
  */
-Node* Node::copy_tree(Node* cur_root){
+Node* Node::copy_tree(const Node* cur_root){
 
     if (cur_root != nullptr){
 
@@ -231,8 +234,8 @@ Node* Node::copy_tree(Node* cur_root){
 
         if (cur_root->data != nullptr){
 
-            new_root->data = new char[DATA_SIZE];
-            memcpy(new_root->data, cur_root->data, DATA_SIZE);
+            new_root->data = new char[MAX_DATA_SIZE];
+            memcpy(new_root->data, cur_root->data, MAX_DATA_SIZE);
         } else{
 
             new_root->data = nullptr;
@@ -262,7 +265,7 @@ Node::Node(const Node& old_node){
 
     if (old_node.data != nullptr){
 
-        memcpy(data, old_node.data, DATA_SIZE);
+        memcpy(data, old_node.data, MAX_DATA_SIZE);
     } else{
 
         delete data;
@@ -314,7 +317,7 @@ Node& Node::operator =(const Node& old_node){
 
     type = old_node.type;
     priority = old_node.priority;
-    memcpy(data, old_node.data, DATA_SIZE);
+    memcpy(data, old_node.data, MAX_DATA_SIZE);
 
     return *this;
 }
@@ -364,7 +367,7 @@ int Node::get_priority(){
  * 
  * @return Node* 
  */
-Node* Node::get_left(){
+Node* Node::get_left() const{
 
     return left;
 }
@@ -374,7 +377,7 @@ Node* Node::get_left(){
  * 
  * @return Node* 
  */
-Node* Node::get_right(){
+Node* Node::get_right() const{
 
     return right;
 }
@@ -384,7 +387,7 @@ Node* Node::get_right(){
  * 
  * @return Node* 
  */
-Node* Node::get_prev(){
+Node* Node::get_prev() const{
 
     return prev;
 }
@@ -403,6 +406,17 @@ bool Node::is_leaf(){
     if ((left == nullptr) && (right == nullptr)){ return true; }
 
     return false;
+}
+
+/**
+ * @brief Яаляется ли содержимое узла переменной.
+ * 
+ * @return true 
+ * @return false 
+ */
+bool Node::is_variable(){
+
+    return is_var(data);
 }
 
 /**
@@ -428,19 +442,20 @@ void Node::add_branches(Node* new_left, Node* new_right){
  * 
  * @param new_data 
  */
-void Node::change_data(NodeData new_data){
+void Node::change_data(const NodeData new_data){
 
     delete data;
     data = nullptr; //чтобы не сжохнуть от двойного освобождения при исключении
-    data = new char[DATA_SIZE];
-    memcpy(data, new_data, strlen(new_data));
+    data = new char[MAX_DATA_SIZE];
+    assert(strlen(new_data) < MAX_DATA_SIZE);
+    memcpy(data, new_data, strlen(new_data) + 1);
 
     type = define_type(new_data);
     priority = define_priority(new_data);
 }
 
 /**
- * @brief Разрыв родителя с левым потомком.
+ * @brief Разрыв данного узла с левым потомком.
  * 
  */
 void Node::unlink_left(){
@@ -453,7 +468,7 @@ void Node::unlink_left(){
 }
 
 /**
- * @brief Разрыв родителя с правым потомком.
+ * @brief Разрыв данного узла с правым потомком.
  * 
  */
 void Node::unlink_right(){
@@ -462,6 +477,26 @@ void Node::unlink_right(){
 
         right->prev = nullptr;
         right = nullptr;
+    }
+}
+
+/**
+ * @brief Разрыв данного узла с родителем.
+ * 
+ */
+void Node::unlink_parent(){
+
+    if (prev != nullptr){
+
+        if (prev->left == this){
+
+            prev->left = nullptr;
+        } else{
+
+            prev->right = nullptr;
+        }
+
+        prev = nullptr;
     }
 }
 
@@ -488,7 +523,7 @@ void choose_color(FILE* outp_file, NodeType node_type){
             break;
         
         case Const_or_num:
-            fprintf(outp_file, "fillcolor=""blue""]\n");
+            fprintf(outp_file, "fillcolor=""lightblue""]\n");
             break;
     }
 }

@@ -1,0 +1,20 @@
+digraph Dump{
+node[color=red,fontsize=14, style=filled]
+"0x55e35ac271f0" [label= "+" fillcolor=green]
+"0x55e35ac271f0" -> "0x55e35ac09e50"
+"0x55e35ac09e50" [label= "1" fillcolor=lightblue]
+"0x55e35ac271f0" -> "0x55e35ac23bd0"
+"0x55e35ac23bd0" [label= "+" fillcolor=green]
+"0x55e35ac23bd0" -> "0x55e35ac3b750"
+"0x55e35ac3b750" [label= "*" fillcolor=green]
+"0x55e35ac3b750" -> "0x55e35ac187d0"
+"0x55e35ac187d0" [label= "y" fillcolor=yellow]
+"0x55e35ac3b750" -> "0x55e35ac3ed70"
+"0x55e35ac3ed70" [label= "0" fillcolor=lightblue]
+"0x55e35ac23bd0" -> "0x55e35ac38150"
+"0x55e35ac38150" [label= "*" fillcolor=green]
+"0x55e35ac38150" -> "0x55e35ac45960"
+"0x55e35ac45960" [label= "1" fillcolor=lightblue]
+"0x55e35ac38150" -> "0x55e35ac1f3c0"
+"0x55e35ac1f3c0" [label= "3" fillcolor=lightblue]
+}

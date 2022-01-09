@@ -1,6 +1,7 @@
-#define DATA_SIZE 8
+#define MAX_DATA_SIZE 8
 
 #include <stdio.h>
+#include <string.h>
 
 /**
  * @brief Типы узлов дерева. Необходимы для покраски узлов графа.
@@ -23,7 +24,7 @@ enum Priorities{
     nothing = 0,
     unary_op = 1,
     power = 2,      //вроде так
-    const_or_num = 3,
+    const_or_var = 3,
     mul_or_div = 4,
     sub = 5,
     sum = 6
@@ -53,7 +54,6 @@ class Node{
     Node* left = nullptr;
     Node* right = nullptr;
     
-    Node* copy_tree(Node* cur_root);
     void print_node_graphviz(Node* cur_node, FILE* graphviz_file);
 public:
 
@@ -63,20 +63,34 @@ public:
     Node(Node&& rv_node);
     ~Node();
 
+    static Node* copy_tree(const Node* cur_root);
+
     Node& operator =(const Node& old_node);
     Node& operator =(Node&& rv_node);
 
     NodeType get_type();
     int get_priority();
 
-    Node* get_left();
-    Node* get_right();
-    Node* get_prev();
+    Node* get_left() const;
+    Node* get_right() const;
+    Node* get_prev() const;
     bool is_leaf();
+    bool is_variable();
     void add_branches(Node* new_left, Node* new_right);
-    void change_data(NodeData new_data);
+    void change_data(const NodeData new_data);
     void unlink_left();
     void unlink_right();
+    void unlink_parent();
     bool check_tree();
     void dump_graphviz(FILE* graph_file);  
+
+    bool operator ==(const Node& right_node){
+
+        if (strcmp(data, right_node.data) == 0){
+
+            return true;
+        }
+
+        return false;
+    }
 };
