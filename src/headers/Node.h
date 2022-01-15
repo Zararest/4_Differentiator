@@ -12,11 +12,12 @@ enum Types{
     Nothing = 0,
     Op = 1,
     Var = 2,
-    Const_or_num = 3
+    Const_or_num = 3,
+    Diff = 4
 };
 
 /**
- * @brief Приоритеты операций. В дереве при обходе вглубину должны убывать , иначе при выводе необходимы скобки.
+ * @brief Приоритеты операций. В дереве при обходе вглубину должны убывать, иначе при выводе необходимы скобки.
  * 
  */
 enum Priorities{
@@ -27,7 +28,8 @@ enum Priorities{
     const_or_var = 3,
     mul_or_div = 4,
     sub = 5,
-    sum = 6
+    sum = 6,
+    differ = 7
 };
 
 typedef int NodePriority;
@@ -58,7 +60,7 @@ class Node{
 public:
 
     Node() = default;
-    Node(Node* new_left, NodeData new_data, Node* new_right);
+    Node(Node* new_left, const NodeData new_data, Node* new_right);
     Node(const Node& old_node);
     Node(Node&& rv_node);
     ~Node();
@@ -77,6 +79,7 @@ public:
     bool is_leaf();
     bool is_variable();
     void add_branches(Node* new_left, Node* new_right);
+    void swap_branches();
     void change_data(const NodeData new_data);
     void unlink_left();
     void unlink_right();
@@ -85,7 +88,14 @@ public:
     void dump_graphviz(FILE* graph_file);  
 
     bool operator ==(const Node& right_node){
+        
+        if (right_node.data == nullptr){
 
+            if (data == nullptr){ return true; }
+
+            return false;
+        }
+        
         if (strcmp(data, right_node.data) == 0){
 
             return true;

@@ -163,6 +163,23 @@ Node* Differ::get_unary_op(){
     }
 }
 
+void Differ::add_var(const NodeData new_var){
+
+    for (int i = 0; i < num_of_vars; i++){
+
+        if (strcmp(new_var, arr_of_vars[i]) == 0){ return; }
+    }
+
+    NodeData* tmp_arr = new NodeData[num_of_vars + 1];
+    memcpy(tmp_arr, arr_of_vars, num_of_vars  * sizeof(NodeData));
+    delete[] arr_of_vars;
+    arr_of_vars = tmp_arr;
+
+    arr_of_vars[num_of_vars] = new char[MAX_VAR_SIZE];
+    memcpy(arr_of_vars[num_of_vars], new_var, MAX_VAR_SIZE);
+    num_of_vars++;
+}
+
 Node* Differ::get_var(){
 
     Node* fir_arg = nullptr;
@@ -176,6 +193,8 @@ Node* Differ::get_var(){
         
         cur_pos += cur_var_size;
         fir_arg = new Node(nullptr, cur_var, nullptr);
+
+        add_var(cur_var);
 
         return fir_arg; 
     } else{
@@ -255,6 +274,7 @@ Differ::~Differ(){
 
     delete line;
     delete root;
+    delete arr_of_vars;
 }
 
 void Differ::dump_graphiz(FILE* graph_file){
@@ -267,22 +287,48 @@ void Differ::dump_graphiz(FILE* graph_file){
 
 void Differ::differentiate(){
 
-    diff_node(root);
+    if (num_of_vars == 0){
+
+        root->add_branches(nullptr, nullptr);
+        root->change_data("0");
+        return;
+    }
+
+    Node* cur_diff = Node::copy_tree(root);
+    Node* tmp_root = nullptr;
+    Node* new_root = nullptr;
+
+    cur_var = arr_of_vars[0];
+    diff_node(cur_diff);
+
+    new_root = new Node(cur_diff, "|", new Node(nullptr, cur_var, nullptr)); 
+
+    for (int i = 1; i < num_of_vars; i++){
+
+        cur_diff = Node::copy_tree(root);
+        cur_var = arr_of_vars[i];
+        diff_node(cur_diff);
+
+        tmp_root = new Node(cur_diff, "|", new Node(nullptr, cur_var, nullptr)); 
+        new_root = new Node(new_root, "+", tmp_root);
+    }
+
+    root = new_root;
     //optimize();
 }
 
 void Differ::diff_unary_op(Node* cur_node){
 
+    DECLARE_DIFF_VARS
+
+    DIFF_COMPLEX(DIFF_SIN);
 }
 
 void Differ::diff_node(Node* cur_node){
 
     if (cur_node == nullptr){ return; }
 
-    Node* tmp_left = nullptr;
-    Node* tmp_right = nullptr;
-    Node* tmp_diff = nullptr;
-    Node* tmp_root = nullptr;
+    DECLARE_DIFF_VARS
 
     switch (cur_node->get_priority()){ //надо подумать что делать с разными переменными
 

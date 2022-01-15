@@ -10,6 +10,10 @@
  */
 class Differ{
 
+    NodeData* arr_of_vars = nullptr;
+    NodeData cur_var = nullptr;
+    int num_of_vars = 0;
+
     Node* root = nullptr;
     int cur_pos = 0;
     char* line = nullptr;
@@ -25,6 +29,7 @@ class Differ{
     Node* get_num();
     Node* get_const();
 
+    void add_var(const NodeData new_var);
     bool check_tree();
     void diff_node(Node* cur_node);
     void diff_unary_op(Node* cur_node);

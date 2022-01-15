@@ -154,6 +154,7 @@ NodeType define_type(NodeData node_data){
     if (find_in_unary_op(node_data) || find_in_binary_op(node_data)){ return Op; }
     if (find_in_consts(node_data) || is_number(node_data)){ return Const_or_num; }
     if (is_var(node_data)){ return Var; }
+    if (strcmp(node_data, "|") == 0){ return Diff; }
 
     return -1;
 }
@@ -162,9 +163,9 @@ NodeType define_type(NodeData node_data){
  * @brief Определение типа узла по его data.
  * 
  * @param node_data 
- * @return int 
+ * @return NodePriority 
  */
-int define_priority(NodeData node_data){
+NodePriority define_priority(NodeData node_data){
 
     if (node_data == nullptr){ return nothing; }
     if (find_in_unary_op(node_data)){ return unary_op; }
@@ -172,6 +173,7 @@ int define_priority(NodeData node_data){
     if ((strcmp(node_data, "*") == 0) || (strcmp(node_data, "/") == 0)){ return mul_or_div; }
     if (strcmp(node_data, "-") == 0){ return sub; }
     if (strcmp(node_data, "+") == 0){ return sum; }
+    if (strcmp(node_data, "|") == 0){ return differ; }
 
     return const_or_var;
 }
@@ -183,7 +185,7 @@ int define_priority(NodeData node_data){
  * @param new_data 
  * @param new_right 
  */
-Node::Node(Node* new_left, NodeData new_data, Node* new_right){
+Node::Node(Node* new_left, const NodeData new_data, Node* new_right){
     
     type = define_type(new_data);
     priority = define_priority(new_data);
@@ -438,6 +440,17 @@ void Node::add_branches(Node* new_left, Node* new_right){
 }
 
 /**
+ * @brief Меняет местами потомков узла.
+ * 
+ */
+void Node::swap_branches(){
+
+    Node* tmp = right;
+    right = left;
+    left = tmp;
+}
+
+/**
  * @brief Изменение данных с изменением типа и приоритета.
  * 
  * @param new_data 
@@ -525,6 +538,9 @@ void choose_color(FILE* outp_file, NodeType node_type){
         case Const_or_num:
             fprintf(outp_file, "fillcolor=""lightblue""]\n");
             break;
+        
+        case Diff:
+            fprintf(outp_file, "fillcolor=""red""]\n");
     }
 }
 

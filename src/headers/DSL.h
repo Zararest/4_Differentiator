@@ -23,78 +23,99 @@
 #define GET_LL_BRNCH cur_node->get_left()->get_left()
 #define GET_LR_BRNCH cur_node->get_left()->get_right()
 
-#define DIFF_EXP_POW_FUNC   do{                                             \
-                                tmp_root = cur_node;                        \
-                                                                            \
-                                tmp_left = copy_tree(tmp_root);             \
-                                cur_node = tmp_left;                        \
-                                DIFF_COMPLEX(DIFF_EXP_FUNC);                \
-                                tmp_left = cur_node;                        \
-                                                                            \
-                                cur_node = copy_tree(tmp_root);             \
-                                DIFF_COMPLEX(DIFF_POW_FUNC);                \
-                                tmp_right = cur_node;                       \
-                                                                            \
-                                tmp_root->add_branches(tmp_left, tmp_right);\
-                                tmp_root->change_data("+");                 \
-                            } while (0)
+
+#define DIFF_POWER  do{                                                                 \
+                        tmp_power_root = cur_node;                                      \
+                                                                                        \
+                        tmp_power_left = Node::copy_tree(tmp_power_root);               \
+                        cur_node = tmp_power_left;                                      \
+                        DIFF_COMPLEX(DIFF_EXP_FUNC);                                    \
+                        tmp_power_left = cur_node;                                      \
+                                                                                        \
+                        cur_node = Node::copy_tree(tmp_power_root);                     \
+                        cur_node->swap_branches();                                      \
+                        DIFF_COMPLEX(DIFF_POW_FUNC);                                    \
+                        cur_node->swap_branches();                                      \    
+                        tmp_power_right = cur_node;                                     \
+                                                                                        \
+                        tmp_power_root->add_branches(tmp_power_left, tmp_power_right);  \
+                        tmp_power_root->change_data("+");                               \
+                    } while (0)
 
 #define DIFF_POW_FUNC   do{                                                                     \
-                            tmp_left = copy_tree(cur_node->get_right());                        \
+                            tmp_left = Node::copy_tree(cur_node->get_right());                  \
                             tmp_diff = cur_node->get_left();                                    \
-                                                                                                \
                             tmp_diff->unlink_parent();                                          \
+                                                                                                \
                             tmp_root = cur_node->get_right();                                   \
                             tmp_root->unlink_parent();                                          \
                                                                                                 \
                             tmp_right = new Node(tmp_diff, "^", FUNC_MINUS_ONE_NODE(tmp_root)); \
+                                                                                                \
+                            cur_node->add_branches(tmp_left, tmp_right);                        \
+                            cur_node->change_data("*");                                         \
                         } while (0)
 
 
-#define DIFF_EXP_FUNC   do{                                                                         \
-                            tmp_left = copy_tree(cur_node);                                         \
-                            tmp_right = new Node(EMPTY_NODE, "ln", copy_tree(cur_node->get_left()));\
-                                                                                                    \
-                            cur_node->add_brunches(tmp_left, tmp_right);                            \
-                            cur_node->change_data("*");                                             \
+#define DIFF_EXP_FUNC   do{                                                                                 \
+                            tmp_left = Node::copy_tree(cur_node);                                           \
+                            tmp_right = new Node(EMPTY_NODE, "ln", Node::copy_tree(cur_node->get_left()));  \
+                                                                                                            \
+                            cur_node->add_branches(tmp_left, tmp_right);                                    \
+                            cur_node->change_data("*");                                                     \
                         } while (0)
 
 #define DIFF_SIN    do{                                 \
                         cur_node->change_data("cos");   \
                     } while (0)
 
+#define DECLARE_DIFF_VARS   Node* tmp_left = nullptr;           \
+                            Node* tmp_right = nullptr;          \
+                            Node* tmp_diff = nullptr;           \
+                            Node* tmp_root = nullptr;           \
+                            Node* tmp_power_root = nullptr;     \
+                            Node* tmp_power_left = nullptr;     \
+                            Node* tmp_power_right = nullptr;    \
+                            Node* tmp_complex_left = nullptr;   \
+                            Node* tmp_complex_right = nullptr;  \
+                            Node* tmp_complex_diff = nullptr;   \
+                            Node* tmp_complex_root = nullptr;   \
+                            Node* tmp_swap = nullptr;           \
 
 /**
  * @brief Тут точно ебанет.
  * 
  */
-#define DIFF_COMPLEX(diff_of_func)  do{                                                 \
-                                        tmp_root = copy_tree(cur_node);                 \
-                                                                                        \
-                                        tmp_diff = tmp_root;                            \
-                                        tmp_root = cur_node;                            \
-                                        cur_node = tmp_diff;                            \
-                                                                                        \
-                                        diff_of_func;                                   \
-                                                                                        \
-                                        tmp_right = copy_tree(tmp_root->get_right());   \
-                                        diff_node(tmp_right);                           \
-                                                                                        \
-                                        tmp_root->add_branches(cur_node, tmp_right);    \
-                                                                                        \
-                                        tmp_root->change_data("*");                     \
+#define DIFF_COMPLEX(diff_of_func)  do{                                                                 \
+                                        tmp_complex_root = Node::copy_tree(cur_node);                   \
+                                                                                                        \
+                                        tmp_complex_diff = tmp_complex_root;                            \
+                                        tmp_complex_root = cur_node;                                    \
+                                        cur_node = tmp_complex_diff;                                    \
+                                                                                                        \
+                                        diff_of_func;                                                   \
+                                                                                                        \
+                                        tmp_complex_right = Node::copy_tree(tmp_complex_root->get_right());     \
+                                        diff_node(tmp_complex_right);                                   \
+                                                                                                        \
+                                        tmp_complex_root->add_branches(cur_node, tmp_complex_right);    \
+                                                                                                        \
+                                        tmp_complex_root->change_data("*");                             \
+                                        cur_node = tmp_complex_root;                                    \
                                     } while (0)
-
-#define DIFF_POWER  do{             \
-                                    \
-                    } while (0)     
 
 #define DIFF_CONST  do{                             \
                         cur_node->change_data("0"); \
                     } while (0)     
 
-#define DIFF_VAR  do{                               \
-                        cur_node->change_data("1"); \
+#define DIFF_VAR  do{                                                       \   
+                        if (*cur_node == Node(nullptr, cur_var, nullptr)){  \
+                                                                            \
+                            cur_node->change_data("1");                     \
+                        } else{                                             \
+                                                                            \
+                            cur_node->change_data("0");                     \
+                        }                                                   \
                     } while (0)  
 
 #define DIFF_SUB    do{                                     \
@@ -147,7 +168,7 @@
                                                                                                                                 \
                         tmp_diff = Node::copy_tree(tmp_right);                                                                  \
                         diff_node(tmp_diff);                                                                                    \
-                        GET_LL_BRNCH->add_branches(tmp_left, tmp_diff);                                                         \
+                        GET_LR_BRNCH->add_branches(tmp_left, tmp_diff);                                                         \
                                                                                                                                 \
                         cur_node->get_right()->add_branches(tmp_right, new Node(nullptr, "2", nullptr));                        \
                     } while (0)    
