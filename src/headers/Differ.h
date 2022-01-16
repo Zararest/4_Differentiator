@@ -19,6 +19,8 @@ class Differ{
     char* line = nullptr;
     bool error_has_occured = false;
 
+    int num_of_expr_optimizations = 0;
+
     Node* get_root_expr();
     Node* get_expr();
     Node* get_div_mul();
@@ -33,6 +35,11 @@ class Differ{
     bool check_tree();
     void diff_node(Node* cur_node);
     void diff_unary_op(Node* cur_node);
+    void optimize_expr(Node* cur_root);
+    void find_expr(Node* cur_node);
+    int calc_binary_op(Node* cur_root);
+    int calc_unary_op(Node* cur_root);
+    int non_digit_transforms(Node* cur_root);
 public:
 
     Differ(FILE* file);

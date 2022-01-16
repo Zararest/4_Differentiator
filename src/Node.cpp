@@ -16,7 +16,7 @@
  * @return true 
  * @return false 
  */
-bool find_in_unary_op(const NodeData lexem){
+bool find_in_unary_op(ConstNodeData lexem){
 
     char buffer[MAX_FILE_SIZE] = "";
     FILE* file = fopen("../bin/unary_operators.bin", "r");
@@ -35,7 +35,7 @@ bool find_in_unary_op(const NodeData lexem){
  * @return true 
  * @return false 
  */
-bool find_in_binary_op(const NodeData lexem){
+bool find_in_binary_op(ConstNodeData lexem){
 
     char buffer[MAX_FILE_SIZE] = "";
     FILE* file = fopen("../bin/binary_operators.bin", "r");
@@ -54,7 +54,7 @@ bool find_in_binary_op(const NodeData lexem){
  * @return true 
  * @return false 
  */
-bool find_in_consts(const NodeData lexem){
+bool find_in_consts(ConstNodeData lexem){
 
     char buffer[MAX_FILE_SIZE] = "";
     FILE* file = fopen("../bin/consts.bin", "r");
@@ -73,7 +73,7 @@ bool find_in_consts(const NodeData lexem){
  * @return true 
  * @return false 
  */
-bool is_number(const NodeData lexem){
+bool is_number(ConstNodeData lexem){
 
     char* endptr = nullptr;
     double ret = strtod(lexem, &endptr);
@@ -92,7 +92,7 @@ bool is_number(const NodeData lexem){
  * @return true 
  * @return false 
  */
-bool is_var(const NodeData lexem){
+bool is_var(ConstNodeData lexem){
 
     if (find_in_unary_op(lexem) || find_in_consts(lexem)){
         return false;
@@ -148,7 +148,7 @@ bool Node::check_tree(){
  * @param node_data 
  * @return NodeType 
  */
-NodeType define_type(NodeData node_data){
+NodeType define_type(ConstNodeData node_data){
 
     if (node_data == nullptr){ return Nothing; }
     if (find_in_unary_op(node_data) || find_in_binary_op(node_data)){ return Op; }
@@ -165,7 +165,7 @@ NodeType define_type(NodeData node_data){
  * @param node_data 
  * @return NodePriority 
  */
-NodePriority define_priority(NodeData node_data){
+NodePriority define_priority(ConstNodeData node_data){
 
     if (node_data == nullptr){ return nothing; }
     if (find_in_unary_op(node_data)){ return unary_op; }
@@ -185,7 +185,7 @@ NodePriority define_priority(NodeData node_data){
  * @param new_data 
  * @param new_right 
  */
-Node::Node(Node* new_left, const NodeData new_data, Node* new_right){
+Node::Node(Node* new_left, ConstNodeData new_data, Node* new_right){
     
     type = define_type(new_data);
     priority = define_priority(new_data);
@@ -455,7 +455,7 @@ void Node::swap_branches(){
  * 
  * @param new_data 
  */
-void Node::change_data(const NodeData new_data){
+void Node::change_data(ConstNodeData new_data){
 
     delete data;
     data = nullptr; //чтобы не сжохнуть от двойного освобождения при исключении
@@ -588,7 +588,7 @@ void Node::dump_graphviz(FILE* outp_file){
     fprintf(outp_file, "digraph Dump{\n");
     fprintf(outp_file, "node[color=""red"",fontsize=14, style=""filled""]\n");
     
-    print_node_graphviz(this, outp_file);
-
+    if (this != nullptr){ print_node_graphviz(this, outp_file); }
+    
     fprintf(outp_file, "}\n");
 }

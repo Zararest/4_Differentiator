@@ -22,7 +22,7 @@
 #define EMPTY_NODE new Node(nullptr, nullptr, nullptr)
 #define GET_LL_BRNCH cur_node->get_left()->get_left()
 #define GET_LR_BRNCH cur_node->get_left()->get_right()
-
+#define TMP_NODE(data) Node(nullptr, data, nullptr)
 
 #define DIFF_POWER  do{                                                                 \
                         tmp_power_root = cur_node;                                      \
@@ -35,7 +35,7 @@
                         cur_node = Node::copy_tree(tmp_power_root);                     \
                         cur_node->swap_branches();                                      \
                         DIFF_COMPLEX(DIFF_POW_FUNC);                                    \
-                        cur_node->swap_branches();                                      \    
+                        cur_node->swap_branches();                                      \
                         tmp_power_right = cur_node;                                     \
                                                                                         \
                         tmp_power_root->add_branches(tmp_power_left, tmp_power_right);  \
@@ -68,6 +68,34 @@
 #define DIFF_SIN    do{                                 \
                         cur_node->change_data("cos");   \
                     } while (0)
+
+#define DIFF_COS    do{                                                                     \
+                        tmp_right = cur_node->get_right();                                  \
+                        tmp_right->unlink_parent();                                         \
+                                                                                            \
+                        tmp_diff = new Node(EMPTY_NODE, "sin", tmp_right);                  \
+                        cur_node->add_branches(new Node(nullptr, "-1", nullptr), tmp_diff); \
+                        cur_node->change_data("*");                                         \
+                    } while (0)
+
+#define DIFF_TAN    do{                                                                         \
+                        tmp_right = cur_node->get_right();                                      \
+                        tmp_right->unlink_parent();                                             \
+                                                                                                \
+                        tmp_diff = new Node(EMPTY_NODE, "cos", tmp_right);                      \
+                        tmp_right = new Node(tmp_diff, "^", new Node(nullptr, "2", nullptr));   \
+                                                                                                \
+                        cur_node->add_branches(new Node(nullptr, "1", nullptr), tmp_right);     \
+                        cur_node->change_data("/");                                             \
+                    } while (0)
+
+#define DIFF_LN     do{                                                                         \
+                        tmp_right = cur_node->get_right();                                      \
+                        tmp_right->unlink_parent();                                             \
+                                                                                                \
+                        cur_node->add_branches(new Node(nullptr, "1", nullptr), tmp_right);     \
+                        cur_node->change_data("/");                                             \
+                    } while (0)                    
 
 #define DECLARE_DIFF_VARS   Node* tmp_left = nullptr;           \
                             Node* tmp_right = nullptr;          \
@@ -108,7 +136,7 @@
                         cur_node->change_data("0"); \
                     } while (0)     
 
-#define DIFF_VAR  do{                                                       \   
+#define DIFF_VAR  do{                                                       \
                         if (*cur_node == Node(nullptr, cur_var, nullptr)){  \
                                                                             \
                             cur_node->change_data("1");                     \
@@ -150,6 +178,7 @@
  * @brief  Если ебанет то на 84 и 89 строчках
  * 
  */
+
 #define DIFF_DIV    do{                                                                                                         \
                         cur_node->change_data("/");                                                                             \
                         tmp_left = cur_node->get_left();                                                                        \
@@ -171,4 +200,5 @@
                         GET_LR_BRNCH->add_branches(tmp_left, tmp_diff);                                                         \
                                                                                                                                 \
                         cur_node->get_right()->add_branches(tmp_right, new Node(nullptr, "2", nullptr));                        \
-                    } while (0)    
+                    } while (0)
+

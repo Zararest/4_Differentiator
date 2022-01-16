@@ -35,12 +35,13 @@ enum Priorities{
 typedef int NodePriority;
 typedef int NodeType;
 typedef char* NodeData;
+typedef const char* ConstNodeData;
 
-bool find_in_unary_op(NodeData lexem);
-bool find_in_binary_op(NodeData lexem);
-bool find_in_consts(NodeData lexem);
-bool is_number(NodeData lexem);
-bool is_var(NodeData lexem);
+bool find_in_unary_op(ConstNodeData lexem);
+bool find_in_binary_op(ConstNodeData lexem);
+bool find_in_consts(ConstNodeData lexem);
+bool is_number(ConstNodeData lexem);
+bool is_var(ConstNodeData lexem);
 
 /**
  * @brief Класс узла дерева. При добавлении инфорцации в узел автоматически определяется тип и приоритет. Реализован вывод через Graphviz.
@@ -60,7 +61,7 @@ class Node{
 public:
 
     Node() = default;
-    Node(Node* new_left, const NodeData new_data, Node* new_right);
+    Node(Node* new_left, ConstNodeData new_data, Node* new_right);
     Node(const Node& old_node);
     Node(Node&& rv_node);
     ~Node();
@@ -80,7 +81,7 @@ public:
     bool is_variable();
     void add_branches(Node* new_left, Node* new_right);
     void swap_branches();
-    void change_data(const NodeData new_data);
+    void change_data(ConstNodeData new_data);
     void unlink_left();
     void unlink_right();
     void unlink_parent();

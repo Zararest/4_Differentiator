@@ -280,7 +280,7 @@ Differ::~Differ(){
 void Differ::dump_graphiz(FILE* graph_file){
 
     assert(graph_file != nullptr);
-    assert(root->check_tree());
+    assert((root == nullptr) || root->check_tree());
 
     root->dump_graphviz(graph_file);
 }
@@ -289,8 +289,12 @@ void Differ::differentiate(){
 
     if (num_of_vars == 0){
 
-        root->add_branches(nullptr, nullptr);
-        root->change_data("0");
+        if (root != nullptr){
+
+            root->add_branches(nullptr, nullptr);
+            root->change_data("0");
+        }
+        
         return;
     }
 
@@ -314,14 +318,19 @@ void Differ::differentiate(){
     }
 
     root = new_root;
-    //optimize();
+    
+    optimize();
 }
 
 void Differ::diff_unary_op(Node* cur_node){
 
     DECLARE_DIFF_VARS
+    assert(cur_node != nullptr);
 
-    DIFF_COMPLEX(DIFF_SIN);
+    if (*cur_node == TMP_NODE("sin")){ DIFF_COMPLEX(DIFF_SIN); return; }
+    if (*cur_node == TMP_NODE("cos")){ DIFF_COMPLEX(DIFF_COS); return; }
+    if (*cur_node == TMP_NODE("tg")){ DIFF_COMPLEX(DIFF_TAN); return; }
+    if (*cur_node == TMP_NODE("ln")){ DIFF_COMPLEX(DIFF_LN); return; }
 }
 
 void Differ::diff_node(Node* cur_node){
@@ -370,4 +379,43 @@ void Differ::diff_node(Node* cur_node){
             DIFF_SUM;
             break;
     }
+}
+
+void Differ::find_expr(Node* cur_node){
+
+    if (cur_node == nullptr){ return; }
+
+    if (*cur_node == TMP_NODE("|")){ 
+
+        optimize_expr(cur_node->get_left());
+        return;
+    }
+
+    find_expr(cur_node->get_left());
+    find_expr(cur_node->get_right());
+}
+
+void Differ::optimize(){
+
+    do{
+        num_of_expr_optimizations = 0;
+
+        find_expr(root);
+
+    } while (num_of_expr_optimizations > 0);
+}
+
+
+
+void Differ::optimize_expr(Node* cur_root){
+
+    int num_of_cur_opt = 0;
+
+    do{
+
+        num_of_cur_opt += calc_binary_op(cur_root);
+        num_of_cur_opt += calc_unary_op(cur_root);
+        num_of_cur_opt += non_digit_transforms(cur_root);
+
+    } while (num_of_cur_opt > 0);
 }
