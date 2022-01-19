@@ -22,7 +22,7 @@
 #define EMPTY_NODE new Node(nullptr, nullptr, nullptr)
 #define GET_LL_BRNCH cur_node->get_left()->get_left()
 #define GET_LR_BRNCH cur_node->get_left()->get_right()
-#define TMP_NODE(data) Node(nullptr, data, nullptr)
+//#define TMP_NODE(data) Node(nullptr, data, nullptr)
 
 #define DIFF_POWER  do{                                                                 \
                         tmp_power_root = cur_node;                                      \
@@ -108,7 +108,7 @@
                             Node* tmp_complex_right = nullptr;  \
                             Node* tmp_complex_diff = nullptr;   \
                             Node* tmp_complex_root = nullptr;   \
-                            Node* tmp_swap = nullptr;           \
+                            Node* tmp_swap = nullptr;           
 
 /**
  * @brief Тут точно ебанет.
@@ -137,7 +137,7 @@
                     } while (0)     
 
 #define DIFF_VAR  do{                                                       \
-                        if (*cur_node == Node(nullptr, cur_var, nullptr)){  \
+                        if (cur_node->cmp_data(cur_var)){                   \
                                                                             \
                             cur_node->change_data("1");                     \
                         } else{                                             \
@@ -202,3 +202,15 @@
                         cur_node->get_right()->add_branches(tmp_right, new Node(nullptr, "2", nullptr));                        \
                     } while (0)
 
+#define REMOVE_LEFT_OPERAND do{                                                             \
+                                tmp_right = cur_node->get_right()->get_right();             \
+                                if (tmp_right != nullptr) { tmp_right->unlink_parent(); }   \
+                                                                                            \
+                                tmp_left = cur_node->get_right()->get_left();               \
+                                if (tmp_left != nullptr){ tmp_left->unlink_parent(); }      \
+                                                                                            \
+                                cur_node->move_data(cur_node->get_right());                 \
+                                cur_node->add_branches(tmp_left, tmp_right);                \
+                            } while(0)
+
+    

@@ -77,16 +77,19 @@ public:
     Node* get_left() const;
     Node* get_right() const;
     Node* get_prev() const;
+    double get_num() const;
     bool is_leaf();
     bool is_variable();
+    bool cmp_data(ConstNodeData outer_data) const;
     void add_branches(Node* new_left, Node* new_right);
     void swap_branches();
     void change_data(ConstNodeData new_data);
+    void move_data(Node* tmp_node);
     void unlink_left();
     void unlink_right();
     void unlink_parent();
     bool check_tree();
-    void dump_graphviz(FILE* graph_file);  
+    void dump_graphviz(FILE* graph_file); 
 
     bool operator ==(const Node& right_node){
         
@@ -103,5 +106,5 @@ public:
         }
 
         return false;
-    }
+    } 
 };

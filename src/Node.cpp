@@ -395,6 +395,21 @@ Node* Node::get_prev() const{
 }
 
 /**
+ * @brief Возвращает значение узла, если его тип Const_or_num, и -1, если другой тип. 
+ * 
+ * @return double 
+ */
+double Node::get_num() const{
+
+    if (type != Const_or_num){ return -1; }
+
+    if (strcmp(data, "e") == 0){ return 2.72; }
+    if (strcmp(data, "pi") == 0){ return 3.14; }
+    
+    return strtod(data, nullptr);
+}
+
+/**
  * @brief Является ли узел листом.
  * 
  * @return true 
@@ -419,6 +434,27 @@ bool Node::is_leaf(){
 bool Node::is_variable(){
 
     return is_var(data);
+}
+
+/**
+ * @brief Сравнение данных узла и переданной строки.
+ * 
+ * @param outer_data 
+ * @return true 
+ * @return false 
+ */
+bool Node::cmp_data(ConstNodeData outer_data) const{
+
+    if (outer_data == nullptr){
+
+        if (data == nullptr){ return true; }
+
+        return false;
+    }
+    
+    if (strcmp(data, outer_data) == 0){ return true; }
+
+    return false;
 }
 
 /**
@@ -465,6 +501,27 @@ void Node::change_data(ConstNodeData new_data){
 
     type = define_type(new_data);
     priority = define_priority(new_data);
+}
+
+/**
+ * @brief Меняет местами указатели на данные и тип с приоритетом. 
+ * 
+ * @param tmp_node 
+ */
+void Node::move_data(Node* tmp_node){
+
+    NodeData tmp_data = data;
+    NodeType tmp_type = type;
+    NodePriority tmp_prior = priority;
+
+    data = tmp_node->data;
+    tmp_node->data = tmp_data;
+
+    type = tmp_node->type;
+    tmp_node->type = tmp_type;
+    
+    priority = tmp_node->priority;
+    tmp_node->priority = tmp_prior;
 }
 
 /**
