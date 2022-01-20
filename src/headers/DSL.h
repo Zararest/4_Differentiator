@@ -34,7 +34,7 @@
                                                                                         \
                         cur_node = Node::copy_tree(tmp_power_root);                     \
                         cur_node->swap_branches();                                      \
-                        DIFF_COMPLEX(DIFF_POW_FUNC);                                    \
+                        DIFF_COMPLEX(cur_node->swap_branches();  DIFF_POW_FUNC);        \
                         cur_node->swap_branches();                                      \
                         tmp_power_right = cur_node;                                     \
                                                                                         \
@@ -114,22 +114,22 @@
  * @brief Тут точно ебанет.
  * 
  */
-#define DIFF_COMPLEX(diff_of_func)  do{                                                                 \
-                                        tmp_complex_root = Node::copy_tree(cur_node);                   \
-                                                                                                        \
-                                        tmp_complex_diff = tmp_complex_root;                            \
-                                        tmp_complex_root = cur_node;                                    \
-                                        cur_node = tmp_complex_diff;                                    \
-                                                                                                        \
-                                        diff_of_func;                                                   \
-                                                                                                        \
-                                        tmp_complex_right = Node::copy_tree(tmp_complex_root->get_right());     \
-                                        diff_node(tmp_complex_right);                                   \
-                                                                                                        \
-                                        tmp_complex_root->add_branches(cur_node, tmp_complex_right);    \
-                                                                                                        \
-                                        tmp_complex_root->change_data("*");                             \
-                                        cur_node = tmp_complex_root;                                    \
+#define DIFF_COMPLEX(diff_of_func)  do{                                                                     \
+                                        tmp_complex_root = Node::copy_tree(cur_node);                       \
+                                                                                                            \
+                                        tmp_complex_diff = tmp_complex_root;                                \
+                                        tmp_complex_root = cur_node;                                        \
+                                        cur_node = tmp_complex_diff;                                        \
+                                                                                                            \
+                                        diff_of_func;                                                       \
+                                                                                                            \
+                                        tmp_complex_right = Node::copy_tree(tmp_complex_root->get_right()); \
+                                        diff_node(tmp_complex_right);                                       \
+                                                                                                            \
+                                        tmp_complex_root->add_branches(cur_node, tmp_complex_right);        \
+                                                                                                            \
+                                        tmp_complex_root->change_data("*");                                 \
+                                        cur_node = tmp_complex_root;                                        \
                                     } while (0)
 
 #define DIFF_CONST  do{                             \

@@ -39,7 +39,11 @@ class Differ{
     void find_expr(Node* cur_node);
     int calc_binary_op(Node* cur_root);
     int calc_unary_op(Node* cur_root);
-    int non_digit_transforms(Node* cur_root);
+    int sum_optimizations(Node* cur_node);
+    int sub_optimizations(Node* cur_node);
+    int mul_optimizations(Node* cur_node);
+    int div_optimizations(Node* cur_node);
+    int pow_optimizations(Node* cur_node);
 public:
 
     Differ(FILE* file);

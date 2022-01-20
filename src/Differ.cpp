@@ -341,7 +341,7 @@ void Differ::diff_node(Node* cur_node){
 
     DECLARE_DIFF_VARS
 
-    switch (cur_node->get_priority()){ //надо подумать что делать с разными переменными
+    switch (cur_node->get_priority()){
 
         case unary_op:
             diff_unary_op(cur_node);
@@ -411,52 +411,40 @@ int Differ::calc_binary_op(Node* cur_root){
 
     if ((cur_root == nullptr) || (cur_root->is_leaf())){ return 0; }
 
-    char new_num[MAX_NUM_SIZE] = {"!"};
     Node* cur_left = cur_root->get_left();
     Node* cur_right = cur_root->get_right();
 
     assert(cur_left != nullptr);
     assert(cur_right != nullptr);    
 
-    if ((cur_root->get_type() == Op)
-        && (cur_right->get_type() == Const_or_num)
-            && (cur_left->get_type() == Const_or_num)){
-        
-        if (cur_root->get_priority() == sum){
+    int opt_of_sub_tree = calc_binary_op(cur_left) + calc_binary_op(cur_right);
 
-            sprintf(new_num, "%.3lf", cur_left->get_num() + cur_right->get_num());
-        }
+    if (cur_root->get_priority() == sum){
 
-        if (cur_root->get_priority() == sub){
-
-            sprintf(new_num, "%.3lf", cur_left->get_num() - cur_right->get_num());
-        }
-
-        if (cur_root->get_priority() == mul_or_div){
-
-            if (cur_root->cmp_data("*")){ 
-
-                sprintf(new_num, "%.3lf", cur_left->get_num() * cur_right->get_num());
-            } else{
-
-                if (cur_right->get_num() != 0){ 
-
-                    sprintf(new_num, "%.3lf", cur_left->get_num() / cur_right->get_num());
-                } else{
-
-                    sprintf(new_num, "nan");
-                }
-            }
-        }
-        
-        cur_root->change_data(new_num);
-        cur_root->add_branches(nullptr, nullptr);
-
-        return WAS_OPTIMIZED;
-    } else{
-
-        return calc_binary_op(cur_left) + calc_binary_op(cur_right);
+        return sum_optimizations(cur_root) + opt_of_sub_tree;
     }
+
+    if (cur_root->get_priority() == sub){
+
+        return sub_optimizations(cur_root) + opt_of_sub_tree;
+    }
+
+    if (cur_root->cmp_data("*")){
+
+        return mul_optimizations(cur_root) + opt_of_sub_tree;
+    }
+
+    if (cur_root->cmp_data("/")){
+
+        return div_optimizations(cur_root) + opt_of_sub_tree;
+    }
+
+    if (cur_root->get_priority() == power){
+
+        return pow_optimizations(cur_root) + opt_of_sub_tree;
+    }
+
+    return opt_of_sub_tree;
 }
 
 int Differ::calc_unary_op(Node* cur_root){
@@ -511,101 +499,203 @@ int Differ::calc_unary_op(Node* cur_root){
     return WAS_OPTIMIZED;
 }
 
-int Differ::non_digit_transforms(Node* cur_node){
+int Differ::sum_optimizations(Node* cur_node){
 
-    if ((cur_node == nullptr) || (cur_node->is_leaf())){ return 0; }
-
-    int opt_of_sub_tree = 0;
     char new_num[MAX_NUM_SIZE] = {"!"};
     Node* cur_left = cur_node->get_left();
     Node* cur_right = cur_node->get_right();
-    DECLARE_DIFF_VARS
+    Node* tmp_right = nullptr;
+    Node* tmp_left = nullptr;
 
-    assert(cur_left != nullptr);
-    assert(cur_right != nullptr);
+    if ((cur_right->get_type() == Const_or_num)
+        && (cur_left->get_type() == Const_or_num)){
+        
+        sprintf(new_num, "%.3lf", cur_left->get_num() + cur_right->get_num());
 
-    if (cur_node->get_priority() == sum){
+        cur_node->change_data(new_num);
+        cur_node->add_branches(nullptr, nullptr);
 
-        if (cur_node->cmp_data("0")){ 
+        return WAS_OPTIMIZED;
+    }
+
+    if (cur_node->get_left()->get_num() == 0){ 
             
-            REMOVE_LEFT_OPERAND;
-            opt_of_sub_tree = non_digit_transforms(cur_node->get_left()) + non_digit_transforms(cur_node->get_right());
-            return WAS_OPTIMIZED + opt_of_sub_tree;
-        }
-
-        if (cur_node->cmp_data("0")){
-
-            cur_node->swap_branches();
-            REMOVE_LEFT_OPERAND;
-            opt_of_sub_tree = non_digit_transforms(cur_node->get_left()) + non_digit_transforms(cur_node->get_right());
-            return WAS_OPTIMIZED + opt_of_sub_tree;
-        }    
-    }
-
-    if (cur_node->get_priority() == sub){
-
-        if (cur_node->cmp_data("0")){
-
-            cur_node->swap_branches();
-            REMOVE_LEFT_OPERAND;
-            opt_of_sub_tree = non_digit_transforms(cur_node->get_left()) + non_digit_transforms(cur_node->get_right());
-            return WAS_OPTIMIZED + opt_of_sub_tree;
-        }
-    }
-
-    if ((cur_node->get_priority() == mul_or_div)
-        && (cur_node->get_left()->cmp_data("0"))){
-
-        cur_node->change_data("0");
-        cur_node->add_branches(nullptr, nullptr);
+        REMOVE_LEFT_OPERAND;
         return WAS_OPTIMIZED;
     }
 
-    if ((cur_node->cmp_data("*"))
-        && (cur_node->get_right()->cmp_data("0"))){
-        
-        cur_node->change_data("0");
-        cur_node->add_branches(nullptr, nullptr);
-        return WAS_OPTIMIZED;
-    }
+    if (cur_node->get_right()->get_num() == 0){
 
-    if (cur_node->cmp_data("*")){
-
-        if (cur_node->get_left()->cmp_data("1")){
-
-            REMOVE_LEFT_OPERAND;
-            opt_of_sub_tree = non_digit_transforms(cur_node->get_left()) + non_digit_transforms(cur_node->get_right());
-            return WAS_OPTIMIZED + opt_of_sub_tree;
-        }
-
-        if (cur_node->get_right()->cmp_data("1")){
-
-            cur_node->swap_branches();
-            REMOVE_LEFT_OPERAND;
-            opt_of_sub_tree = non_digit_transforms(cur_node->get_left()) + non_digit_transforms(cur_node->get_right());
-            return WAS_OPTIMIZED + opt_of_sub_tree;
-        }
-    }
-
-    if ((cur_node->get_priority() == power)
-        && (cur_node->get_right()->cmp_data("1"))){
-        
         cur_node->swap_branches();
         REMOVE_LEFT_OPERAND;
-        opt_of_sub_tree = non_digit_transforms(cur_node->get_left()) + non_digit_transforms(cur_node->get_right());
-        return WAS_OPTIMIZED + opt_of_sub_tree;
+        return WAS_OPTIMIZED;
+    }   
+
+    return 0;
+}
+
+int Differ::sub_optimizations(Node* cur_node){
+
+    char new_num[MAX_NUM_SIZE] = {"!"};
+    Node* cur_left = cur_node->get_left();
+    Node* cur_right = cur_node->get_right();
+    Node* tmp_right = nullptr;
+    Node* tmp_left = nullptr;
+
+    if ((cur_right->get_type() == Const_or_num)
+        && (cur_left->get_type() == Const_or_num)){
+        
+        sprintf(new_num, "%.3lf", cur_left->get_num() - cur_right->get_num());
+
+        cur_node->change_data(new_num);
+        cur_node->add_branches(nullptr, nullptr);
+
+        return WAS_OPTIMIZED;
     }
 
-    if ((cur_node->get_priority() == power)
-        && (cur_node->get_right()->cmp_data("0"))){
+    if (cur_node->get_right()->get_num() == 0){ 
+
+        cur_node->swap_branches();    
+        REMOVE_LEFT_OPERAND;
+        return WAS_OPTIMIZED;
+    }
+
+    return 0;
+}
+
+int Differ::mul_optimizations(Node* cur_node){
+    
+    char new_num[MAX_NUM_SIZE] = {"!"};
+    Node* cur_left = cur_node->get_left();
+    Node* cur_right = cur_node->get_right();
+    Node* tmp_right = nullptr;
+    Node* tmp_left = nullptr;
+
+    if ((cur_right->get_type() == Const_or_num)
+        && (cur_left->get_type() == Const_or_num)){
+        
+        sprintf(new_num, "%.3lf", cur_left->get_num() * cur_right->get_num());
+
+        cur_node->change_data(new_num);
+        cur_node->add_branches(nullptr, nullptr);
+
+        return WAS_OPTIMIZED;
+    }
+
+    if ((cur_node->get_left()->get_num() == 0)
+        || (cur_node->get_right()->get_num() == 0)){
+        
+        cur_node->change_data("0");
+        cur_node->add_branches(nullptr, nullptr);
+        return WAS_OPTIMIZED;
+    }
+
+    if (cur_node->get_left()->get_num() == 1){
+
+        REMOVE_LEFT_OPERAND;
+        return WAS_OPTIMIZED;
+    }
+
+    if (cur_node->get_right()->get_num() == 1){
+
+        cur_node->swap_branches();
+        REMOVE_LEFT_OPERAND;
+        return WAS_OPTIMIZED;
+    }
+
+    return 0;
+}
+
+int Differ::div_optimizations(Node* cur_node){
+
+    char new_num[MAX_NUM_SIZE] = {"!"};
+    Node* cur_left = cur_node->get_left();
+    Node* cur_right = cur_node->get_right();
+    Node* tmp_right = nullptr;
+    Node* tmp_left = nullptr;
+
+    if ((cur_right->get_type() == Const_or_num)
+        && (cur_left->get_type() == Const_or_num)){
+        
+        if (cur_right->get_num() != 0){ 
+
+            sprintf(new_num, "%.3lf", cur_left->get_num() / cur_right->get_num());
+        } else{
+
+            sprintf(new_num, "nan");
+        }
+
+        cur_node->change_data(new_num);
+        cur_node->add_branches(nullptr, nullptr);
+
+        return WAS_OPTIMIZED;
+    }
+
+    if ((cur_node->get_left()->get_num() == 0)){
+        
+        cur_node->change_data("0");
+        cur_node->add_branches(nullptr, nullptr);
+        return WAS_OPTIMIZED;
+    }
+
+    if (cur_node->get_right()->get_num() == 1){
+
+        cur_node->swap_branches();
+        REMOVE_LEFT_OPERAND;
+        return WAS_OPTIMIZED;
+    }
+
+    return 0;
+}
+
+int Differ::pow_optimizations(Node* cur_node){
+
+    char new_num[MAX_NUM_SIZE] = {"!"};
+    Node* cur_left = cur_node->get_left();
+    Node* cur_right = cur_node->get_right();
+    Node* tmp_right = nullptr;
+    Node* tmp_left = nullptr;
+
+    if ((cur_right->get_type() == Const_or_num)
+        && (cur_left->get_type() == Const_or_num)){
+        
+        sprintf(new_num, "%.3lf", pow(cur_left->get_num(), cur_right->get_num()));
+
+        cur_node->change_data(new_num);
+        cur_node->add_branches(nullptr, nullptr);
+
+        return WAS_OPTIMIZED;
+    }
+
+    if ((cur_node->get_left()->get_num() == 0)){
+        
+        cur_node->change_data("0");
+        cur_node->add_branches(nullptr, nullptr);
+        return WAS_OPTIMIZED;
+    }
+
+    if ((cur_node->get_left()->get_num() == 1)){
         
         cur_node->change_data("1");
         cur_node->add_branches(nullptr, nullptr);
         return WAS_OPTIMIZED;
     }
 
-    opt_of_sub_tree = non_digit_transforms(cur_node->get_left()) + non_digit_transforms(cur_node->get_right());
-    return opt_of_sub_tree;
+    if (cur_node->get_right()->get_num() == 1){
+
+        cur_node->swap_branches();
+        REMOVE_LEFT_OPERAND;
+        return WAS_OPTIMIZED;
+    }
+
+    if (cur_node->get_right()->get_num() == 0){
+
+        cur_node->change_data("1");
+        cur_node->add_branches(nullptr, nullptr);
+        return WAS_OPTIMIZED;
+    }
+
+    return 0;
 }
 
 void Differ::optimize_expr(Node* cur_root){
@@ -617,7 +707,6 @@ void Differ::optimize_expr(Node* cur_root){
 
         num_of_cur_opt += calc_binary_op(cur_root);
         num_of_cur_opt += calc_unary_op(cur_root);
-        num_of_cur_opt += non_digit_transforms(cur_root);
 
     } while (num_of_cur_opt > 0);
 }
