@@ -19,6 +19,8 @@ class Differ{
     char* line = nullptr;
     bool error_has_occured = false;
 
+    Node* initial_expr = nullptr;
+
     int num_of_expr_optimizations = 0;
 
     Node* get_root_expr();

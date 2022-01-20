@@ -451,6 +451,8 @@ bool Node::cmp_data(ConstNodeData outer_data) const{
 
         return false;
     }
+
+    if (data == nullptr){ return false; }
     
     if (strcmp(data, outer_data) == 0){ return true; }
 
@@ -636,16 +638,119 @@ void Node::print_node_graphviz(Node* cur_node, FILE* outp_file){
 /**
  * @brief Вывод дерева.
  * 
- * @param outp_file 
+ * @param graph_file 
  */
-void Node::dump_graphviz(FILE* outp_file){
+void Node::dump_graphviz(FILE* graph_file){
 
+    assert(graph_file != nullptr);
+
+    fprintf(graph_file, "digraph Dump{\n");
+    fprintf(graph_file, "node[color=""red"",fontsize=14, style=""filled""]\n");
+    
+    if (this != nullptr){ print_node_graphviz(this, graph_file); }
+    
+    fprintf(graph_file, "}\n");
+}
+
+/**
+ * @brief Рекурсивный вывод выражения в файл Latex.
+ * 
+ * @param cur_node 
+ * @param output_file 
+ */
+void Node::print_node_latex(Node* cur_node, FILE* outp_file){
+    
     assert(outp_file != nullptr);
+    assert(cur_node != nullptr);
 
-    fprintf(outp_file, "digraph Dump{\n");
-    fprintf(outp_file, "node[color=""red"",fontsize=14, style=""filled""]\n");
+    if (cur_node->is_leaf()){
+
+        cur_node->print_node_data(outp_file);
+        return;
+    }
+
+    int cur_priority = cur_node->get_priority();
     
-    if (this != nullptr){ print_node_graphviz(this, outp_file); }
-    
-    fprintf(outp_file, "}\n");
+    if (cur_node->cmp_data("/")){
+
+        fprintf(outp_file, "\\frac{");
+        print_node_latex(cur_node->get_left(), outp_file);
+        fprintf(outp_file, "}{");
+        print_node_latex(cur_node->get_right(), outp_file);
+        fprintf(outp_file, "}");
+        return;
+    }
+
+    if (cur_node->get_left()->get_priority() <= cur_priority){
+
+        print_node_latex(cur_node->get_left(), outp_file);
+        cur_node->print_node_data(outp_file);
+    } else{
+
+        fprintf(outp_file, "(");
+        print_node_latex(cur_node->get_left(), outp_file);
+        fprintf(outp_file, ")");
+        cur_node->print_node_data(outp_file);
+    }
+
+    if (cur_priority == power){
+
+        fprintf(outp_file, "{");
+        print_node_latex(cur_node->get_right(), outp_file);
+        fprintf(outp_file, "}");
+        return;
+    }
+
+    if (cur_priority == unary_op){
+
+        fprintf(outp_file, "(");
+        print_node_latex(cur_node->get_right(), outp_file);
+        fprintf(outp_file, ")");
+        return;
+    }
+
+    if (cur_node->get_right()->get_priority() <= cur_priority){
+
+        print_node_latex(cur_node->get_right(), outp_file);
+    } else{
+
+        fprintf(outp_file, "(");
+        print_node_latex(cur_node->get_right(), outp_file);
+        fprintf(outp_file, ")");
+    }
+}
+
+void Node::print_node_data(FILE* outp_file){
+
+    if (priority == nothing){ return; }
+
+    if (priority == differ){ 
+        
+        fprintf(outp_file, "d");
+        return;    
+    }
+
+    if (priority == unary_op){
+
+        fprintf(outp_file, "\\");
+    }
+
+    fprintf(outp_file, "%s", data);
+}
+
+/**
+ * @brief Вывод выражения в файл Latex.
+ * 
+ * @param latex_file 
+ */
+void Node::dump_latex(FILE* latex_file){
+
+    assert(latex_file != nullptr);
+
+    fprintf(latex_file, "\\begin{displaymath}\n");
+
+    if (this != nullptr){ print_node_latex(this, latex_file); }
+
+    fprintf(latex_file, "\n\\end{displaymath}\n");
+
 }

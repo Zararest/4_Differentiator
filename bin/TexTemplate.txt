@@ -1,0 +1,15 @@
+\documentclass[14pt, a5paper]{article}
+\usepackage[english,russian]{babel}
+\usepackage[utf8]{inputenc}
+
+\title{Дифференцирование функции многих переменных}
+\author{Шумаков Иван}
+
+\begin{document}
+
+\maketitle
+
+Начальная функция:
+
+\begin{displaymath}
+f(x) = 

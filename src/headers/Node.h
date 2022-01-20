@@ -56,8 +56,7 @@ class Node{
     Node* prev = nullptr;
     Node* left = nullptr;
     Node* right = nullptr;
-    
-    void print_node_graphviz(Node* cur_node, FILE* graphviz_file);
+
 public:
 
     Node() = default;
@@ -67,6 +66,8 @@ public:
     ~Node();
 
     static Node* copy_tree(const Node* cur_root);
+    static void print_node_graphviz(Node* cur_node, FILE* outp_file);
+    static void print_node_latex(Node* cur_node, FILE* outp_file);
 
     Node& operator =(const Node& old_node);
     Node& operator =(Node&& rv_node);
@@ -90,6 +91,8 @@ public:
     void unlink_parent();
     bool check_tree();
     void dump_graphviz(FILE* graph_file); 
+    void dump_latex(FILE* latex_file);
+    void print_node_data(FILE* outp_file);
 
     bool operator ==(const Node& right_node){
         

@@ -1,24 +1,24 @@
 digraph Dump{
 node[color=red,fontsize=14, style=filled]
-"0x561ec7f5eef0" [label= "|" fillcolor=red]
-"0x561ec7f5eef0" -> "0x561ec7f54a30"
-"0x561ec7f54a30" [label= "+" fillcolor=green]
-"0x561ec7f54a30" -> "0x561ec7f5b7b0"
-"0x561ec7f5b7b0" [label= "*" fillcolor=green]
-"0x561ec7f5b7b0" -> "0x561ec7f54a60"
-"0x561ec7f54a60" [label= "x" fillcolor=yellow]
-"0x561ec7f5b7b0" -> "0x561ec7f5edd0"
-"0x561ec7f5edd0" [label= "*" fillcolor=green]
-"0x561ec7f5edd0" -> "0x561ec7f6ee70"
-"0x561ec7f6ee70" [label= "2" fillcolor=lightblue]
-"0x561ec7f5edd0" -> "0x561ec7f76cf0"
-"0x561ec7f76cf0" [label= "x" fillcolor=yellow]
-"0x561ec7f54a30" -> "0x561ec7f58190"
-"0x561ec7f58190" [label= "^" fillcolor=green]
-"0x561ec7f58190" -> "0x561ec7f54ae0"
-"0x561ec7f54ae0" [label= "x" fillcolor=yellow]
-"0x561ec7f58190" -> "0x561ec7f54b30"
-"0x561ec7f54b30" [label= "2" fillcolor=lightblue]
-"0x561ec7f5eef0" -> "0x561ec7f5ee00"
-"0x561ec7f5ee00" [label= "x" fillcolor=yellow]
+"0x55eaad0980d0" [label= "|" fillcolor=red]
+"0x55eaad0980d0" -> "0x55eaad098010"
+"0x55eaad098010" [label= "*" fillcolor=green]
+"0x55eaad098010" -> "0x55eaad098160"
+"0x55eaad098160" [label= "cos" fillcolor=green]
+"0x55eaad098160" -> "0x55eaad098190"
+"0x55eaad098190" [label= "null"fillcolor=lightgrey]
+"0x55eaad098160" -> "0x55eaad0981c0"
+"0x55eaad0981c0" [label= "sin" fillcolor=green]
+"0x55eaad0981c0" -> "0x55eaad0981f0"
+"0x55eaad0981f0" [label= "null"fillcolor=lightgrey]
+"0x55eaad0981c0" -> "0x55eaad098220"
+"0x55eaad098220" [label= "x" fillcolor=yellow]
+"0x55eaad098010" -> "0x55eaad09a690"
+"0x55eaad09a690" [label= "cos" fillcolor=green]
+"0x55eaad09a690" -> "0x55eaad09a790"
+"0x55eaad09a790" [label= "null"fillcolor=lightgrey]
+"0x55eaad09a690" -> "0x55eaad09a7c0"
+"0x55eaad09a7c0" [label= "x" fillcolor=yellow]
+"0x55eaad0980d0" -> "0x55eaad098070"
+"0x55eaad098070" [label= "x" fillcolor=yellow]
 }
