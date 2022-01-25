@@ -29,7 +29,7 @@ enum Priorities{
     mul_or_div = 4,
     sub = 5,
     sum = 6,
-    differ = 7
+    differ = -1
 };
 
 typedef int NodePriority;

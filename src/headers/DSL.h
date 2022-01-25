@@ -22,7 +22,7 @@
 #define EMPTY_NODE new Node(nullptr, nullptr, nullptr)
 #define GET_LL_BRNCH cur_node->get_left()->get_left()
 #define GET_LR_BRNCH cur_node->get_left()->get_right()
-//#define TMP_NODE(data) Node(nullptr, data, nullptr)
+
 
 #define DIFF_POWER  do{                                                                 \
                         tmp_power_root = cur_node;                                      \
