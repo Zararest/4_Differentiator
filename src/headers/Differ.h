@@ -3,6 +3,21 @@
 #include <stdio.h>
 
 #define MAX_FILE_SIZE 1024
+#define MAX_PHRASE_SIZE 2048 
+
+#define NUM_PHRASES_COS   13
+#define NUM_PHRASES_SIN   7
+#define NUM_PHRASES_DIV   6
+#define NUM_PHRASES_LN    15
+#define NUM_PHRASES_MUL   20
+#define NUM_PHRASES_POWER 10
+
+#define COS_PATH   "../bin/templates/cos.txt"
+#define SIN_PATH   "../bin/templates/sin.txt"
+#define DIV_PATH   "../bin/templates/div.txt"
+#define LN_PATH    "../bin/templates/ln.txt"
+#define MUL_PATH   "../bin/templates/mul.txt"
+#define POWER_PATH "../bin/templates/power.txt"
 
 /**
  * @brief Основной класс для работы с выражениями. Часть операция над деревом производятся классом Node.
@@ -13,15 +28,18 @@ class Differ{
     NodeData* arr_of_vars = nullptr;
     NodeData cur_var = nullptr;
     int num_of_vars = 0;
-
+    
+    Node* initial_expr = nullptr;
+    Node* cur_diff_root = nullptr;
     Node* root = nullptr;
     int cur_pos = 0;
     char* line = nullptr;
     bool error_has_occured = false;
 
-    Node* initial_expr = nullptr;
-
     int num_of_expr_optimizations = 0;
+
+    FILE* phrases_file = nullptr;
+    int phrases_stack = 0;
 
     Node* get_root_expr();
     Node* get_expr();
@@ -46,6 +64,9 @@ class Differ{
     int mul_optimizations(Node* cur_node);
     int div_optimizations(Node* cur_node);
     int pow_optimizations(Node* cur_node);
+    void generate_phrases(const char* template_file, int num_of_phrases);
+    void print_cur_stage();
+
 public:
 
     Differ(FILE* file);

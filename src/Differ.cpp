@@ -346,7 +346,8 @@ Node* Differ::get_const(){
 Differ::Differ(FILE* file){
     
     struct stat info;
-    
+    srand(12);
+
     if (file == nullptr){ 
 
         printf("Can't open file\n");
@@ -365,6 +366,7 @@ Differ::Differ(FILE* file){
 
     fread(line, sizeof(char), info.st_size, file);
 
+    phrases_file = fopen("../bin/Phrases.txt", "w");
     root = get_root_expr();
 }
 
@@ -411,22 +413,24 @@ void Differ::differentiate(){
 
     initial_expr = Node::copy_tree(root);
 
-    Node* cur_diff = Node::copy_tree(root);
+    cur_diff_root = Node::copy_tree(root);
     Node* tmp_root = nullptr;
     Node* new_root = nullptr;
 
     cur_var = arr_of_vars[0];
-    diff_node(cur_diff);
-
-    new_root = new Node(cur_diff, "|", new Node(nullptr, cur_var, nullptr)); 
+    fprintf(phrases_file, "Приступим к дифференцированию по переменной %s.\n", cur_var);
+    diff_node(cur_diff_root);
+    
+    new_root = new Node(cur_diff_root, "|", new Node(nullptr, cur_var, nullptr)); 
 
     for (int i = 1; i < num_of_vars; i++){
 
-        cur_diff = Node::copy_tree(root);
+        cur_diff_root = Node::copy_tree(root);
         cur_var = arr_of_vars[i];
-        diff_node(cur_diff);
+        fprintf(phrases_file, "Приступим к дифференцированию по переменной %s.\n", cur_var);
+        diff_node(cur_diff_root);
 
-        tmp_root = new Node(cur_diff, "|", new Node(nullptr, cur_var, nullptr)); 
+        tmp_root = new Node(cur_diff_root, "|", new Node(nullptr, cur_var, nullptr)); 
         new_root = new Node(new_root, "+", tmp_root);
     }
 
@@ -445,10 +449,106 @@ void Differ::diff_unary_op(Node* cur_node){
     DECLARE_DIFF_VARS
     assert(cur_node != nullptr);
     
-    if (cur_node->cmp_data("sin")){ DIFF_COMPLEX(DIFF_SIN); return; }
-    if (cur_node->cmp_data("cos")){ DIFF_COMPLEX(DIFF_COS); return; }
-    if (cur_node->cmp_data("tg")){ DIFF_COMPLEX(DIFF_TAN); return; }
-    if (cur_node->cmp_data("ln")){ DIFF_COMPLEX(DIFF_LN); return; }
+    if (cur_node->cmp_data("sin")){  
+        
+        phrases_stack++;
+        DIFF_COMPLEX(DIFF_SIN); 
+        phrases_stack--;
+        if (phrases_stack == 0) { generate_phrases(SIN_PATH, NUM_PHRASES_SIN);}
+        return; 
+    }
+
+    if (cur_node->cmp_data("cos")){ 
+        
+        phrases_stack++;
+        DIFF_COMPLEX(DIFF_COS); 
+        phrases_stack--;
+        if (phrases_stack == 0)  { generate_phrases(COS_PATH, NUM_PHRASES_COS); }
+        return; 
+    }
+
+    if (cur_node->cmp_data("tg")){ 
+        
+        DIFF_COMPLEX(DIFF_TAN); 
+        return; 
+    }
+
+    if (cur_node->cmp_data("ln")){ 
+
+        phrases_stack++;
+        DIFF_COMPLEX(DIFF_LN); 
+        phrases_stack--;
+        if (phrases_stack == 0)  { generate_phrases(LN_PATH, NUM_PHRASES_LN); }
+        return; 
+    }
+}
+
+int get_random_number(int max_num){
+
+    return rand() % max_num;
+}
+
+void Differ::print_cur_stage(){
+
+    Node* tmp_tree = Node::copy_tree(cur_diff_root);
+
+    if (get_random_number(10) > 1){
+
+        optimize_expr(tmp_tree);
+    }
+
+    fprintf(phrases_file, "\\begin{displaymath}\n");
+
+    fprintf(phrases_file, "f'(%s...) = ", cur_var);
+    Node::print_node_latex(tmp_tree, phrases_file);
+
+    fprintf(phrases_file, "\n\\end{displaymath}\n");
+
+    delete tmp_tree;
+}   
+
+void Differ::generate_phrases(const char* template_file, int num_of_phrases){
+
+    int line_num = get_random_number(num_of_phrases), tmp = 0;
+    char* buf = new char[MAX_PHRASE_SIZE];
+    FILE* templ_file = fopen(template_file, "r");
+
+    for (int i = 1; i < line_num; i++){
+        
+        fgets(buf, MAX_PHRASE_SIZE, templ_file);
+        while (buf[0] != '_'){ fgets(buf, MAX_PHRASE_SIZE, templ_file); }
+    }
+
+    do{
+
+        fgets(buf, MAX_PHRASE_SIZE, templ_file);
+
+        if (buf[0] != '_'){
+
+            fprintf(phrases_file, "%s\n", buf);
+        }   
+    } while (buf[0] != '_');
+
+    if (get_random_number(10) != 0){ 
+
+        print_cur_stage();
+    } else {
+
+        fprintf(phrases_file, "\\begin{displaymath}\n");
+
+        if (get_random_number(2) == 0){
+
+            fprintf(phrases_file, "*formula*\n");
+        } else{
+
+            fprintf(phrases_file, "*text*\n");
+        }
+
+        fprintf(phrases_file, "\\end{displaymath}\n");
+    }
+
+    fclose(templ_file);
+    delete[] buf;
 }
 
 /**
@@ -486,11 +586,17 @@ void Differ::diff_node(Node* cur_node){
         case mul_or_div:
                 
             if (cur_node->cmp_data("*")){
-
+                
+                phrases_stack++;
                 DIFF_MUL;
+                phrases_stack--;
+                if (phrases_stack == 0)  { generate_phrases(MUL_PATH, NUM_PHRASES_MUL); }
             } else{
 
+                phrases_stack++;
                 DIFF_DIV;
+                phrases_stack--;
+                if (phrases_stack == 0)  { generate_phrases(DIV_PATH, NUM_PHRASES_DIV); }
             }
             break;   
 
@@ -898,23 +1004,22 @@ void Differ::dump_latex(FILE* latex_file){
     assert(latex_file != nullptr);
     assert((root == nullptr) || root->check_tree());
 
+    fclose(phrases_file);
     int TexPattern = open("../bin/TexTemplate.txt", O_RDONLY);
+    int phrases = open("../bin/Phrases.txt", O_RDONLY);
     int i = 0;
     transfer_data(TexPattern, fileno(latex_file));
+    transfer_data(phrases, fileno(latex_file));
 
-    Node::print_node_latex(initial_expr, latex_file);
-    fprintf(latex_file, "\n\\end{displaymath}\n");
-
-    fprintf(latex_file, "Её дифференциал:\n");
     fprintf(latex_file, "\\begin{displaymath}\n");
     fprintf(latex_file, "df(");
     for (i = 0; i < num_of_vars - 1; i++){
 
         fprintf(latex_file, "%s,", arr_of_vars[i]);
     }
-    fprintf(latex_file, "%s) = ", arr_of_vars[i]);
+    fprintf(latex_file, "%s) = \\sqrt{", arr_of_vars[i]);
 
     Node::print_node_latex(root, latex_file);
-    fprintf(latex_file, "\n\\end{displaymath}\n");
+    fprintf(latex_file, "}\n\\end{displaymath}\n");
     fprintf(latex_file, "\\end{document}\n");
 }

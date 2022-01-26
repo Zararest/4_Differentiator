@@ -1,1 +1,1 @@
-cos(sin(x*y*z*jopa))
+ln(x*x^2)+sin(y)/cos(x*x)+x*y

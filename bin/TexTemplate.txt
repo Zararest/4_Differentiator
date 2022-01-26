@@ -8,8 +8,3 @@
 \begin{document}
 
 \maketitle
-
-Начальная функция:
-
-\begin{displaymath}
-f(x) = 

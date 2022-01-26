@@ -1,256 +1,140 @@
 digraph Dump{
 node[color=red,fontsize=14, style=filled]
-"0x55d83c890380" [label= "+" fillcolor=green]
-"0x55d83c890380" -> "0x55d83c8322d0"
-"0x55d83c8322d0" [label= "+" fillcolor=green]
-"0x55d83c8322d0" -> "0x55d83c7d4210"
-"0x55d83c7d4210" [label= "+" fillcolor=green]
-"0x55d83c7d4210" -> "0x55d83c779660"
-"0x55d83c779660" [label= "|" fillcolor=red]
-"0x55d83c779660" -> "0x55d83c76ed60"
-"0x55d83c76ed60" [label= "*" fillcolor=green]
-"0x55d83c76ed60" -> "0x55d83c76f090"
-"0x55d83c76f090" [label= "*" fillcolor=green]
-"0x55d83c76f090" -> "0x55d83c771820"
-"0x55d83c771820" [label= "-1" fillcolor=lightblue]
-"0x55d83c76f090" -> "0x55d83c76f3f0"
-"0x55d83c76f3f0" [label= "sin" fillcolor=green]
-"0x55d83c76f3f0" -> "0x55d83c76f3c0"
-"0x55d83c76f3c0" [label= "null"fillcolor=lightgrey]
-"0x55d83c76f3f0" -> "0x55d83c76f0f0"
-"0x55d83c76f0f0" [label= "sin" fillcolor=green]
-"0x55d83c76f0f0" -> "0x55d83c76f120"
-"0x55d83c76f120" [label= "null"fillcolor=lightgrey]
-"0x55d83c76f0f0" -> "0x55d83c76f150"
-"0x55d83c76f150" [label= "*" fillcolor=green]
-"0x55d83c76f150" -> "0x55d83c76f180"
-"0x55d83c76f180" [label= "*" fillcolor=green]
-"0x55d83c76f180" -> "0x55d83c76f1b0"
-"0x55d83c76f1b0" [label= "*" fillcolor=green]
-"0x55d83c76f1b0" -> "0x55d83c76f1e0"
-"0x55d83c76f1e0" [label= "x" fillcolor=yellow]
-"0x55d83c76f1b0" -> "0x55d83c76f230"
-"0x55d83c76f230" [label= "y" fillcolor=yellow]
-"0x55d83c76f180" -> "0x55d83c76f2a0"
-"0x55d83c76f2a0" [label= "z" fillcolor=yellow]
-"0x55d83c76f150" -> "0x55d83c76f310"
-"0x55d83c76f310" [label= "jopa" fillcolor=yellow]
-"0x55d83c76ed60" -> "0x55d83c76f0c0"
-"0x55d83c76f0c0" [label= "*" fillcolor=green]
-"0x55d83c76f0c0" -> "0x55d83c779880"
-"0x55d83c779880" [label= "cos" fillcolor=green]
-"0x55d83c779880" -> "0x55d83c7798b0"
-"0x55d83c7798b0" [label= "null"fillcolor=lightgrey]
-"0x55d83c779880" -> "0x55d83c7798e0"
-"0x55d83c7798e0" [label= "*" fillcolor=green]
-"0x55d83c7798e0" -> "0x55d83c779910"
-"0x55d83c779910" [label= "*" fillcolor=green]
-"0x55d83c779910" -> "0x55d83c779940"
-"0x55d83c779940" [label= "*" fillcolor=green]
-"0x55d83c779940" -> "0x55d83c779970"
-"0x55d83c779970" [label= "x" fillcolor=yellow]
-"0x55d83c779940" -> "0x55d83c7799c0"
-"0x55d83c7799c0" [label= "y" fillcolor=yellow]
-"0x55d83c779910" -> "0x55d83c779a30"
-"0x55d83c779a30" [label= "z" fillcolor=yellow]
-"0x55d83c7798e0" -> "0x55d83c779aa0"
-"0x55d83c779aa0" [label= "jopa" fillcolor=yellow]
-"0x55d83c76f0c0" -> "0x55d83c77bf10"
-"0x55d83c77bf10" [label= "*" fillcolor=green]
-"0x55d83c77bf10" -> "0x55d83c78cf40"
-"0x55d83c78cf40" [label= "*" fillcolor=green]
-"0x55d83c78cf40" -> "0x55d83c79ded0"
-"0x55d83c79ded0" [label= "y" fillcolor=yellow]
-"0x55d83c78cf40" -> "0x55d83c78d060"
-"0x55d83c78d060" [label= "z" fillcolor=yellow]
-"0x55d83c77bf10" -> "0x55d83c77c0d0"
-"0x55d83c77c0d0" [label= "jopa" fillcolor=yellow]
-"0x55d83c779660" -> "0x55d83c7797f0"
-"0x55d83c7797f0" [label= "x" fillcolor=yellow]
-"0x55d83c7d4210" -> "0x55d83c7d40f0"
-"0x55d83c7d40f0" [label= "|" fillcolor=red]
-"0x55d83c7d40f0" -> "0x55d83c779780"
-"0x55d83c779780" [label= "*" fillcolor=green]
-"0x55d83c779780" -> "0x55d83c76ef20"
-"0x55d83c76ef20" [label= "*" fillcolor=green]
-"0x55d83c76ef20" -> "0x55d83c7cc2b0"
-"0x55d83c7cc2b0" [label= "-1" fillcolor=lightblue]
-"0x55d83c76ef20" -> "0x55d83c7c9e80"
-"0x55d83c7c9e80" [label= "sin" fillcolor=green]
-"0x55d83c7c9e80" -> "0x55d83c7c9e50"
-"0x55d83c7c9e50" [label= "null"fillcolor=lightgrey]
-"0x55d83c7c9e80" -> "0x55d83c76ef80"
-"0x55d83c76ef80" [label= "sin" fillcolor=green]
-"0x55d83c76ef80" -> "0x55d83c76efb0"
-"0x55d83c76efb0" [label= "null"fillcolor=lightgrey]
-"0x55d83c76ef80" -> "0x55d83c76efe0"
-"0x55d83c76efe0" [label= "*" fillcolor=green]
-"0x55d83c76efe0" -> "0x55d83c76f010"
-"0x55d83c76f010" [label= "*" fillcolor=green]
-"0x55d83c76f010" -> "0x55d83c76f040"
-"0x55d83c76f040" [label= "*" fillcolor=green]
-"0x55d83c76f040" -> "0x55d83c7c9c90"
-"0x55d83c7c9c90" [label= "x" fillcolor=yellow]
-"0x55d83c76f040" -> "0x55d83c7c9cc0"
-"0x55d83c7c9cc0" [label= "y" fillcolor=yellow]
-"0x55d83c76f010" -> "0x55d83c7c9d30"
-"0x55d83c7c9d30" [label= "z" fillcolor=yellow]
-"0x55d83c76efe0" -> "0x55d83c7c9da0"
-"0x55d83c7c9da0" [label= "jopa" fillcolor=yellow]
-"0x55d83c779780" -> "0x55d83c76ef50"
-"0x55d83c76ef50" [label= "*" fillcolor=green]
-"0x55d83c76ef50" -> "0x55d83c7d4310"
-"0x55d83c7d4310" [label= "cos" fillcolor=green]
-"0x55d83c7d4310" -> "0x55d83c7d4340"
-"0x55d83c7d4340" [label= "null"fillcolor=lightgrey]
-"0x55d83c7d4310" -> "0x55d83c7d4370"
-"0x55d83c7d4370" [label= "*" fillcolor=green]
-"0x55d83c7d4370" -> "0x55d83c7d43a0"
-"0x55d83c7d43a0" [label= "*" fillcolor=green]
-"0x55d83c7d43a0" -> "0x55d83c7d43d0"
-"0x55d83c7d43d0" [label= "*" fillcolor=green]
-"0x55d83c7d43d0" -> "0x55d83c7d4400"
-"0x55d83c7d4400" [label= "x" fillcolor=yellow]
-"0x55d83c7d43d0" -> "0x55d83c7d4450"
-"0x55d83c7d4450" [label= "y" fillcolor=yellow]
-"0x55d83c7d43a0" -> "0x55d83c7d44c0"
-"0x55d83c7d44c0" [label= "z" fillcolor=yellow]
-"0x55d83c7d4370" -> "0x55d83c7d4530"
-"0x55d83c7d4530" [label= "jopa" fillcolor=yellow]
-"0x55d83c76ef50" -> "0x55d83c7d69a0"
-"0x55d83c7d69a0" [label= "*" fillcolor=green]
-"0x55d83c7d69a0" -> "0x55d83c7e79d0"
-"0x55d83c7e79d0" [label= "*" fillcolor=green]
-"0x55d83c7e79d0" -> "0x55d83c7f8960"
-"0x55d83c7f8960" [label= "x" fillcolor=yellow]
-"0x55d83c7e79d0" -> "0x55d83c7e7af0"
-"0x55d83c7e7af0" [label= "z" fillcolor=yellow]
-"0x55d83c7d69a0" -> "0x55d83c7d6b60"
-"0x55d83c7d6b60" [label= "jopa" fillcolor=yellow]
-"0x55d83c7d40f0" -> "0x55d83c7d4280"
-"0x55d83c7d4280" [label= "y" fillcolor=yellow]
-"0x55d83c8322d0" -> "0x55d83c8321b0"
-"0x55d83c8321b0" [label= "|" fillcolor=red]
-"0x55d83c8321b0" -> "0x55d83c7d4120"
-"0x55d83c7d4120" [label= "*" fillcolor=green]
-"0x55d83c7d4120" -> "0x55d83c76edd0"
-"0x55d83c76edd0" [label= "*" fillcolor=green]
-"0x55d83c76edd0" -> "0x55d83c82a370"
-"0x55d83c82a370" [label= "-1" fillcolor=lightblue]
-"0x55d83c76edd0" -> "0x55d83c827f40"
-"0x55d83c827f40" [label= "sin" fillcolor=green]
-"0x55d83c827f40" -> "0x55d83c827f10"
-"0x55d83c827f10" [label= "null"fillcolor=lightgrey]
-"0x55d83c827f40" -> "0x55d83c76ee30"
-"0x55d83c76ee30" [label= "sin" fillcolor=green]
-"0x55d83c76ee30" -> "0x55d83c76ee60"
-"0x55d83c76ee60" [label= "null"fillcolor=lightgrey]
-"0x55d83c76ee30" -> "0x55d83c76ee90"
-"0x55d83c76ee90" [label= "*" fillcolor=green]
-"0x55d83c76ee90" -> "0x55d83c827cf0"
-"0x55d83c827cf0" [label= "*" fillcolor=green]
-"0x55d83c827cf0" -> "0x55d83c827d20"
-"0x55d83c827d20" [label= "*" fillcolor=green]
-"0x55d83c827d20" -> "0x55d83c827d50"
-"0x55d83c827d50" [label= "x" fillcolor=yellow]
-"0x55d83c827d20" -> "0x55d83c827d80"
-"0x55d83c827d80" [label= "y" fillcolor=yellow]
-"0x55d83c827cf0" -> "0x55d83c827df0"
-"0x55d83c827df0" [label= "z" fillcolor=yellow]
-"0x55d83c76ee90" -> "0x55d83c827e60"
-"0x55d83c827e60" [label= "jopa" fillcolor=yellow]
-"0x55d83c7d4120" -> "0x55d83c76ee00"
-"0x55d83c76ee00" [label= "*" fillcolor=green]
-"0x55d83c76ee00" -> "0x55d83c8323d0"
-"0x55d83c8323d0" [label= "cos" fillcolor=green]
-"0x55d83c8323d0" -> "0x55d83c832400"
-"0x55d83c832400" [label= "null"fillcolor=lightgrey]
-"0x55d83c8323d0" -> "0x55d83c832430"
-"0x55d83c832430" [label= "*" fillcolor=green]
-"0x55d83c832430" -> "0x55d83c832460"
-"0x55d83c832460" [label= "*" fillcolor=green]
-"0x55d83c832460" -> "0x55d83c832490"
-"0x55d83c832490" [label= "*" fillcolor=green]
-"0x55d83c832490" -> "0x55d83c8324c0"
-"0x55d83c8324c0" [label= "x" fillcolor=yellow]
-"0x55d83c832490" -> "0x55d83c832510"
-"0x55d83c832510" [label= "y" fillcolor=yellow]
-"0x55d83c832460" -> "0x55d83c832580"
-"0x55d83c832580" [label= "z" fillcolor=yellow]
-"0x55d83c832430" -> "0x55d83c8325f0"
-"0x55d83c8325f0" [label= "jopa" fillcolor=yellow]
-"0x55d83c76ee00" -> "0x55d83c834a60"
-"0x55d83c834a60" [label= "*" fillcolor=green]
-"0x55d83c834a60" -> "0x55d83c845a90"
-"0x55d83c845a90" [label= "*" fillcolor=green]
-"0x55d83c845a90" -> "0x55d83c845af0"
-"0x55d83c845af0" [label= "x" fillcolor=yellow]
-"0x55d83c845a90" -> "0x55d83c845b40"
-"0x55d83c845b40" [label= "y" fillcolor=yellow]
-"0x55d83c834a60" -> "0x55d83c834c20"
-"0x55d83c834c20" [label= "jopa" fillcolor=yellow]
-"0x55d83c8321b0" -> "0x55d83c832340"
-"0x55d83c832340" [label= "z" fillcolor=yellow]
-"0x55d83c890380" -> "0x55d83c890260"
-"0x55d83c890260" [label= "|" fillcolor=red]
-"0x55d83c890260" -> "0x55d83c8321e0"
-"0x55d83c8321e0" [label= "*" fillcolor=green]
-"0x55d83c8321e0" -> "0x55d83c7d41c0"
-"0x55d83c7d41c0" [label= "*" fillcolor=green]
-"0x55d83c7d41c0" -> "0x55d83c888420"
-"0x55d83c888420" [label= "-1" fillcolor=lightblue]
-"0x55d83c7d41c0" -> "0x55d83c885ff0"
-"0x55d83c885ff0" [label= "sin" fillcolor=green]
-"0x55d83c885ff0" -> "0x55d83c885fc0"
-"0x55d83c885fc0" [label= "null"fillcolor=lightgrey]
-"0x55d83c885ff0" -> "0x55d83c7796c0"
-"0x55d83c7796c0" [label= "sin" fillcolor=green]
-"0x55d83c7796c0" -> "0x55d83c7796f0"
-"0x55d83c7796f0" [label= "null"fillcolor=lightgrey]
-"0x55d83c7796c0" -> "0x55d83c779720"
-"0x55d83c779720" [label= "*" fillcolor=green]
-"0x55d83c779720" -> "0x55d83c779750"
-"0x55d83c779750" [label= "*" fillcolor=green]
-"0x55d83c779750" -> "0x55d83c885db0"
-"0x55d83c885db0" [label= "*" fillcolor=green]
-"0x55d83c885db0" -> "0x55d83c885de0"
-"0x55d83c885de0" [label= "x" fillcolor=yellow]
-"0x55d83c885db0" -> "0x55d83c885e30"
-"0x55d83c885e30" [label= "y" fillcolor=yellow]
-"0x55d83c779750" -> "0x55d83c885ea0"
-"0x55d83c885ea0" [label= "z" fillcolor=yellow]
-"0x55d83c779720" -> "0x55d83c885f10"
-"0x55d83c885f10" [label= "jopa" fillcolor=yellow]
-"0x55d83c8321e0" -> "0x55d83c779690"
-"0x55d83c779690" [label= "*" fillcolor=green]
-"0x55d83c779690" -> "0x55d83c890480"
-"0x55d83c890480" [label= "cos" fillcolor=green]
-"0x55d83c890480" -> "0x55d83c8904b0"
-"0x55d83c8904b0" [label= "null"fillcolor=lightgrey]
-"0x55d83c890480" -> "0x55d83c8904e0"
-"0x55d83c8904e0" [label= "*" fillcolor=green]
-"0x55d83c8904e0" -> "0x55d83c890510"
-"0x55d83c890510" [label= "*" fillcolor=green]
-"0x55d83c890510" -> "0x55d83c890540"
-"0x55d83c890540" [label= "*" fillcolor=green]
-"0x55d83c890540" -> "0x55d83c890570"
-"0x55d83c890570" [label= "x" fillcolor=yellow]
-"0x55d83c890540" -> "0x55d83c8905c0"
-"0x55d83c8905c0" [label= "y" fillcolor=yellow]
-"0x55d83c890510" -> "0x55d83c890630"
-"0x55d83c890630" [label= "z" fillcolor=yellow]
-"0x55d83c8904e0" -> "0x55d83c8906a0"
-"0x55d83c8906a0" [label= "jopa" fillcolor=yellow]
-"0x55d83c779690" -> "0x55d83c892b10"
-"0x55d83c892b10" [label= "*" fillcolor=green]
-"0x55d83c892b10" -> "0x55d83c892b70"
-"0x55d83c892b70" [label= "*" fillcolor=green]
-"0x55d83c892b70" -> "0x55d83c892ba0"
-"0x55d83c892ba0" [label= "x" fillcolor=yellow]
-"0x55d83c892b70" -> "0x55d83c892bf0"
-"0x55d83c892bf0" [label= "y" fillcolor=yellow]
-"0x55d83c892b10" -> "0x55d83c892c60"
-"0x55d83c892c60" [label= "z" fillcolor=yellow]
-"0x55d83c890260" -> "0x55d83c8903f0"
-"0x55d83c8903f0" [label= "jopa" fillcolor=yellow]
+"0x55950b965620" [label= "+" fillcolor=green]
+"0x55950b965620" -> "0x55950b88d130"
+"0x55950b88d130" [label= "|" fillcolor=red]
+"0x55950b88d130" -> "0x55950b7c7b30"
+"0x55950b7c7b30" [label= "+" fillcolor=green]
+"0x55950b7c7b30" -> "0x55950b7c7b60"
+"0x55950b7c7b60" [label= "+" fillcolor=green]
+"0x55950b7c7b60" -> "0x55950b7c7b90"
+"0x55950b7c7b90" [label= "*" fillcolor=green]
+"0x55950b7c7b90" -> "0x55950b7c9170"
+"0x55950b7c9170" [label= "/" fillcolor=green]
+"0x55950b7c9170" -> "0x55950b7c9380"
+"0x55950b7c9380" [label= "1" fillcolor=lightblue]
+"0x55950b7c9170" -> "0x55950b7c91d0"
+"0x55950b7c91d0" [label= "*" fillcolor=green]
+"0x55950b7c91d0" -> "0x55950b7c9200"
+"0x55950b7c9200" [label= "x" fillcolor=yellow]
+"0x55950b7c91d0" -> "0x55950b7c9250"
+"0x55950b7c9250" [label= "^" fillcolor=green]
+"0x55950b7c9250" -> "0x55950b7c9280"
+"0x55950b7c9280" [label= "x" fillcolor=yellow]
+"0x55950b7c9250" -> "0x55950b7c92d0"
+"0x55950b7c92d0" [label= "2" fillcolor=lightblue]
+"0x55950b7c7b90" -> "0x55950b7c91a0"
+"0x55950b7c91a0" [label= "+" fillcolor=green]
+"0x55950b7c91a0" -> "0x55950b7d7eb0"
+"0x55950b7d7eb0" [label= "*" fillcolor=green]
+"0x55950b7d7eb0" -> "0x55950b7d1160"
+"0x55950b7d1160" [label= "x" fillcolor=yellow]
+"0x55950b7d7eb0" -> "0x55950b7db4d0"
+"0x55950b7db4d0" [label= "*" fillcolor=green]
+"0x55950b7db4d0" -> "0x55950b7eb570"
+"0x55950b7eb570" [label= "2" fillcolor=lightblue]
+"0x55950b7db4d0" -> "0x55950b7f33f0"
+"0x55950b7f33f0" [label= "x" fillcolor=yellow]
+"0x55950b7c91a0" -> "0x55950b7d4890"
+"0x55950b7d4890" [label= "^" fillcolor=green]
+"0x55950b7d4890" -> "0x55950b7d11e0"
+"0x55950b7d11e0" [label= "x" fillcolor=yellow]
+"0x55950b7d4890" -> "0x55950b7d1230"
+"0x55950b7d1230" [label= "2" fillcolor=lightblue]
+"0x55950b7c7b60" -> "0x55950b7c7da0"
+"0x55950b7c7da0" [label= "/" fillcolor=green]
+"0x55950b7c7da0" -> "0x55950b813530"
+"0x55950b813530" [label= "-" fillcolor=green]
+"0x55950b813530" -> "0x55950b813560"
+"0x55950b813560" [label= "0" fillcolor=lightblue]
+"0x55950b813530" -> "0x55950b813590"
+"0x55950b813590" [label= "*" fillcolor=green]
+"0x55950b813590" -> "0x55950b7c7dd0"
+"0x55950b7c7dd0" [label= "sin" fillcolor=green]
+"0x55950b7c7dd0" -> "0x55950b7c7e00"
+"0x55950b7c7e00" [label= "null"fillcolor=lightgrey]
+"0x55950b7c7dd0" -> "0x55950b7c7e30"
+"0x55950b7c7e30" [label= "y" fillcolor=yellow]
+"0x55950b813590" -> "0x55950b813e50"
+"0x55950b813e50" [label= "*" fillcolor=green]
+"0x55950b813e50" -> "0x55950b813370"
+"0x55950b813370" [label= "*" fillcolor=green]
+"0x55950b813370" -> "0x55950b83a400"
+"0x55950b83a400" [label= "-1" fillcolor=lightblue]
+"0x55950b813370" -> "0x55950b7c7cd0"
+"0x55950b7c7cd0" [label= "sin" fillcolor=green]
+"0x55950b7c7cd0" -> "0x55950b7c7ca0"
+"0x55950b7c7ca0" [label= "null"fillcolor=lightgrey]
+"0x55950b7c7cd0" -> "0x55950b8133d0"
+"0x55950b8133d0" [label= "*" fillcolor=green]
+"0x55950b8133d0" -> "0x55950b7c7bc0"
+"0x55950b7c7bc0" [label= "x" fillcolor=yellow]
+"0x55950b8133d0" -> "0x55950b7c7c10"
+"0x55950b7c7c10" [label= "x" fillcolor=yellow]
+"0x55950b813e50" -> "0x55950b8133a0"
+"0x55950b8133a0" [label= "+" fillcolor=green]
+"0x55950b8133a0" -> "0x55950b848e70"
+"0x55950b848e70" [label= "x" fillcolor=yellow]
+"0x55950b8133a0" -> "0x55950b845850"
+"0x55950b845850" [label= "x" fillcolor=yellow]
+"0x55950b7c7da0" -> "0x55950b813410"
+"0x55950b813410" [label= "^" fillcolor=green]
+"0x55950b813410" -> "0x55950b813470"
+"0x55950b813470" [label= "cos" fillcolor=green]
+"0x55950b813470" -> "0x55950b8134c0"
+"0x55950b8134c0" [label= "null"fillcolor=lightgrey]
+"0x55950b813470" -> "0x55950b813830"
+"0x55950b813830" [label= "*" fillcolor=green]
+"0x55950b813830" -> "0x55950b812060"
+"0x55950b812060" [label= "x" fillcolor=yellow]
+"0x55950b813830" -> "0x55950b812090"
+"0x55950b812090" [label= "x" fillcolor=yellow]
+"0x55950b813410" -> "0x55950b813eb0"
+"0x55950b813eb0" [label= "2" fillcolor=lightblue]
+"0x55950b7c7b30" -> "0x55950b7c8050"
+"0x55950b7c8050" [label= "y" fillcolor=yellow]
+"0x55950b88d130" -> "0x55950b863670"
+"0x55950b863670" [label= "x" fillcolor=yellow]
+"0x55950b965620" -> "0x55950b964b40"
+"0x55950b964b40" [label= "|" fillcolor=red]
+"0x55950b964b40" -> "0x55950b88d190"
+"0x55950b88d190" [label= "+" fillcolor=green]
+"0x55950b88d190" -> "0x55950b88d160"
+"0x55950b88d160" [label= "/" fillcolor=green]
+"0x55950b88d160" -> "0x55950b8f9b30"
+"0x55950b8f9b30" [label= "*" fillcolor=green]
+"0x55950b8f9b30" -> "0x55950b8f9a40"
+"0x55950b8f9a40" [label= "cos" fillcolor=green]
+"0x55950b8f9a40" -> "0x55950b8c1cf0"
+"0x55950b8c1cf0" [label= "null"fillcolor=lightgrey]
+"0x55950b8f9a40" -> "0x55950b863af0"
+"0x55950b863af0" [label= "y" fillcolor=yellow]
+"0x55950b8f9b30" -> "0x55950b8621b0"
+"0x55950b8621b0" [label= "cos" fillcolor=green]
+"0x55950b8621b0" -> "0x55950b8621e0"
+"0x55950b8621e0" [label= "null"fillcolor=lightgrey]
+"0x55950b8621b0" -> "0x55950b88be20"
+"0x55950b88be20" [label= "*" fillcolor=green]
+"0x55950b88be20" -> "0x55950b88be50"
+"0x55950b88be50" [label= "x" fillcolor=yellow]
+"0x55950b88be20" -> "0x55950b864a80"
+"0x55950b864a80" [label= "x" fillcolor=yellow]
+"0x55950b88d160" -> "0x55950b8f9a10"
+"0x55950b8f9a10" [label= "^" fillcolor=green]
+"0x55950b8f9a10" -> "0x55950b8f9a70"
+"0x55950b8f9a70" [label= "cos" fillcolor=green]
+"0x55950b8f9a70" -> "0x55950b8f9ac0"
+"0x55950b8f9ac0" [label= "null"fillcolor=lightgrey]
+"0x55950b8f9a70" -> "0x55950b813e80"
+"0x55950b813e80" [label= "*" fillcolor=green]
+"0x55950b813e80" -> "0x55950b813ee0"
+"0x55950b813ee0" [label= "x" fillcolor=yellow]
+"0x55950b813e80" -> "0x55950b88d1c0"
+"0x55950b88d1c0" [label= "x" fillcolor=yellow]
+"0x55950b8f9a10" -> "0x55950b8f8670"
+"0x55950b8f8670" [label= "2" fillcolor=lightblue]
+"0x55950b88d190" -> "0x55950b863770"
+"0x55950b863770" [label= "x" fillcolor=yellow]
+"0x55950b964b40" -> "0x55950b9656b0"
+"0x55950b9656b0" [label= "y" fillcolor=yellow]
 }

@@ -156,6 +156,8 @@
                         diff_node(cur_node->get_right());   \
                     } while (0)    
 
+//тут ебануло
+
 #define DIFF_MUL    do{                                                                                          \
                         cur_node->change_data("+");                                                              \
                         tmp_left = cur_node->get_left();                                                         \

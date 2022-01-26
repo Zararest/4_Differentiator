@@ -663,6 +663,8 @@ void Node::print_node_latex(Node* cur_node, FILE* outp_file){
     assert(outp_file != nullptr);
     assert(cur_node != nullptr);
 
+    fflush(outp_file);
+
     if (cur_node->is_leaf()){
 
         cur_node->print_node_data(outp_file);
@@ -709,6 +711,13 @@ void Node::print_node_latex(Node* cur_node, FILE* outp_file){
         return;
     }
 
+    if (cur_priority == differ){
+
+        print_node_latex(cur_node->get_right(), outp_file);
+        fprintf(outp_file, "^2");
+        return;
+    }
+
     if (cur_node->get_right()->get_priority() <= cur_priority){
 
         print_node_latex(cur_node->get_right(), outp_file);
@@ -726,7 +735,7 @@ void Node::print_node_data(FILE* outp_file){
 
     if (priority == differ){ 
         
-        fprintf(outp_file, "d");
+        fprintf(outp_file, "|_");
         return;    
     }
 
